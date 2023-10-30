@@ -1,0 +1,37 @@
+from enum import Enum
+
+
+class Local(Enum):
+    VIDIGAL = 1
+    URCA = 2
+    ROCINHA = 3
+    TIJUCA = 4
+    SANTA_TERESA = 5
+    COPACABANA = 6
+    GRAJAÚ = 7
+    ILHA_DO_GOVERNADOR = 8
+    PENHA = 9
+    MADUREIRA = 10
+    IRAJA = 11
+    BANGU = 12
+    PIEDADE = 13
+    JACAREPAGUA = 14
+    SAUDE = 15
+    JARDIM_BOTÂNICO = 16
+    BARRA = 17
+    CIDADE_DE_DEUS = 18
+    RIOCENTRO = 19
+    GUARATIBA = 20
+    EST_GRAJAU = 21
+    SANTA_CRUZ = 22
+    MEIER = 23
+    ANCHIETA = 24
+    GROTA_FUNDA = 25
+    CAMPO_GRANDE = 26
+    SEPETIBA = 27
+    ALTO_DA_BOA_VISTA = 28
+    MENDANHA = 29
+    RECREIO = 30
+    LARANJEIRAS = 31
+    SAO_CRISTÓVÃO = 32
+    MUDA = 33
