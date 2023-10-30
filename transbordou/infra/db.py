@@ -3,10 +3,12 @@ from functools import lru_cache
 
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
+from transbordou.domain.domain import Base
+
 
 
 class Settings:
-    asyncpg_url: str = os.getenv("SQL_URL") or "sqlite+aiosqlite:///test.db"
+    asyncpg_url: str = os.getenv("SQL_URL") or "sqlite+aiosqlite:///:memory:"
 
 
 @lru_cache

@@ -1,102 +1,64 @@
-from transbordou.acumulado import Acumulado
+from datetime import date, datetime
+from sqlalchemy.ext.asyncio import AsyncEngine
+
+
 from dateutil import parser
+from transbordou.domain.entities.rain import RainRead
+from transbordou.domain.repositories.chuva_repository import ChuvaRepository
 
 from transbordou.locais import Local
 
 
 class Chuva:
-    chuva_fraca = 7.6
-    chuva_moderada = 30.0
-    chuva_forte = 30.1
+    chuva_fraca = (0.1, 5.0)
+    chuva_moderada = (5.1, 25.0)
+    chuva_forte = (25.1, 50.0)
+    chuva_muito_forte = (50.1, 1000.0)
 
-    def __init__(self):
-        self._chuva: list[Acumulado] = None
+    def __init__(self, chuva_repository: ChuvaRepository):
+        self._chuva: list[RainRead] = None
+        self.chuva_repository = chuva_repository
 
-    def choveu(self, estacao: str | Local | int, data: str, hora: str = None) -> bool:
+    def _to_datetime_or_date(self, data: str, hora: str = None) -> datetime | date:
+        if hora:
+            date = parser.parse(data + " " + hora, dayfirst=True)
+        else:
+            date = parser.parse(data, dayfirst=True).date()
+        return date
+
+    async def choveu(self, estacao: str | int, data: str, hora: str = None) -> bool:
         if isinstance(estacao, int):
             _estacao = Local(int).name
-        elif isinstance(estacao, Local):
-            _estacao = estacao.name
         elif isinstance(estacao, str):
             _estacao = estacao.upper()
-        if not hora:
-            date = parser.parse(data).date()
-            return any(
-                chuva
-                for chuva in self._chuva
-                if (chuva.data.date() == date)
-                and (chuva.quantidade_1_h >= 0)
-                and (chuva.estacao == _estacao)
-            )
-        else:
-            date = parser.parse(data + " " + hora)
-            return any(
-                chuva
-                for chuva in self._chuva
-                if chuva.data == date
-                and (chuva.quantidade_15_min >= 0)
-                and (chuva.estacao == _estacao)
-            )
+        date = self._to_datetime_or_date(data, hora)
+        result = await self.chuva_repository.is_raining(_estacao, date)
+        if result:
+            return True
+        return False
 
-    def choveu_forte(self, data: str, hora: str = None) -> bool:
-        if not hora:
-            date = parser.parse(data).date()
-            return any(
-                chuva
-                for chuva in self._chuva
-                if (chuva.data.date() == date)
-                and (chuva.quantidade_1_h >= self.chuva_forte)
-            )
-        else:
-            date = parser.parse(data + " " + hora)
-            return any(
-                chuva
-                for chuva in self._chuva
-                if (chuva.data == date)
-                and (chuva.quantidade_15_min >= self.chuva_forte)
-            )
+    async def choveu_fraca(self, data: str, hora: str = None) -> bool:
+        return await self._rain_intensity(data, self.chuva_fraca, hora)
 
-    def choveu_moderado(self, data: str, hora: str = None) -> bool:
-        if not hora:
-            date = parser.parse(data).date()
-            return any(
-                chuva
-                for chuva in self._chuva
-                if (chuva.data.date() == date)
-                and (chuva.quantidade_1_h >= self.chuva_fraca)
-                and (chuva.quantidade_1_h < self.chuva_forte)
-            )
-        else:
-            date = parser.parse(data + " " + hora)
-            return any(
-                chuva
-                for chuva in self._chuva
-                if chuva.data == date
-                and (chuva.quantidade_15_min >= self.chuva_moderada)
-                and (chuva.quantidade_15_min < self.chuva_forte)
-            )
+    async def choveu_forte(self, data: str, hora: str = None) -> bool:
+        return await self._rain_intensity(data, self.chuva_forte, hora)
 
-    def choveu_fraca(self, data: str, hora: str = None) -> bool:
-        if not self.choveu:
-            return False
-        if not hora:
-            date = parser.parse(data).date()
-            return any(
-                chuva
-                for chuva in self._chuva
-                if (chuva.data.date() == date)
-                and (chuva.quantidade_1_h < self.chuva_moderada)
-            )
-        else:
-            date = parser.parse(data + " " + hora)
-            return any(
-                chuva
-                for chuva in self._chuva
-                if chuva.data == date
-                and (chuva.quantidade_15_min < self.chuva_moderada)
-            )
+    async def choveu_muito_forte(self, data: str, hora: str = None) -> bool:
+        return await self._rain_intensity(data, self.chuva_muito_forte, hora)
 
-    def maior_acumulado(self, data: str) -> Acumulado:
+    async def choveu_moderado(self, data: str, hora: str = None) -> bool:
+        return await self._rain_intensity(data, self.chuva_moderada, hora)
+
+    async def _rain_intensity(
+        self, data: str, intensity: tuple[float], hora: str = None
+    ) -> bool:
+        if await self.chuva_repository.rain_intensity(
+            "IRAJA", self._to_datetime_or_date(data, hora), intensity
+        ):
+            return True
+        return False
+
+    def maior_acumulado(self, data: str) -> RainRead:
         date = parser.parse(data).date()
         chuvas = [chuva for chuva in self._chuva if chuva.data.date() == date]
         return max(chuvas, key=lambda chuva: chuva.quantidade_1_h)

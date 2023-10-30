@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy.sql import func
 
 
 class Base(DeclarativeBase):
@@ -12,7 +11,7 @@ class ChuvaModel(Base):
     __tablename__ = "chuvas"
     id: Mapped[int] = mapped_column(primary_key=True)
     data: Mapped[datetime]
-    bairro: Mapped[str]
+    estacao: Mapped[str]
     quantidade_15_min: Mapped[float]
     quantidade_1_h: Mapped[float]
     quantidade_4_h: Mapped[float]
