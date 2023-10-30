@@ -1,12 +1,13 @@
-from datetime import datetime, date
-from sqlalchemy import func, select, update, delete
+from datetime import date, datetime
+
+from sqlalchemy import delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from transbordou.domain.domain import ChuvaModel
 from transbordou.domain.entities.rain import RainBase, RainUpdate
 
 
-class ChuvaRepository:
+class RainRepository:
     def __init__(self, session: AsyncEngine):
         self.session = session
 

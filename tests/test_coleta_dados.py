@@ -1,7 +1,7 @@
 import pytest
-from transbordou.coletar import coletar
 
 from transbordou.chuva import Chuva
+from transbordou.coletar import coletar
 
 
 @pytest.fixture
@@ -47,6 +47,4 @@ async def test_se_dados_informa_que_houve_chuva_muito_forte(chuva: Chuva):
     assert await chuva.choveu_muito_forte("29/10/2023") is False
 
 
-# def test_se_pega_maior_acumulado_de_chuva(chuva):
-#     chuva = Chuva()
-#     chuva.maior_acumulado("29/10/2023").quantidade_15_min == 14.4
+

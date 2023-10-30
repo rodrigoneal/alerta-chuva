@@ -1,12 +1,14 @@
-from datetime import datetime
 import re
+from datetime import datetime
 from typing import Annotated
-from pydantic import BeforeValidator, BaseModel, constr
 
 from dateutil import parser
+from pydantic import BaseModel, BeforeValidator, constr
 
 
 def parser_float(text: str):
+    if isinstance(text, float):
+        return text
     if text == "ND":
         return 0.0
     return float(text.strip().replace(",", "."))

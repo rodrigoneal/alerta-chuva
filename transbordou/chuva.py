@@ -1,11 +1,10 @@
 from datetime import date, datetime
-from sqlalchemy.ext.asyncio import AsyncEngine
-
 
 from dateutil import parser
-from transbordou.domain.entities.rain import RainRead
-from transbordou.domain.repositories.chuva_repository import ChuvaRepository
+from sqlalchemy.ext.asyncio import AsyncEngine
 
+from transbordou.domain.entities.rain import RainRead
+from transbordou.domain.repositories.rain_repository import RainRepository
 from transbordou.locais import Local
 
 
@@ -15,9 +14,9 @@ class Chuva:
     chuva_forte = (25.1, 50.0)
     chuva_muito_forte = (50.1, 1000.0)
 
-    def __init__(self, chuva_repository: ChuvaRepository):
+    def __init__(self, rain_repository: RainRepository):
         self._chuva: list[RainRead] = None
-        self.chuva_repository = chuva_repository
+        self.rain_repository = rain_repository
 
     def _to_datetime_or_date(self, data: str, hora: str = None) -> datetime | date:
         if hora:
@@ -32,7 +31,7 @@ class Chuva:
         elif isinstance(estacao, str):
             _estacao = estacao.upper()
         date = self._to_datetime_or_date(data, hora)
-        result = await self.chuva_repository.is_raining(_estacao, date)
+        result = await self.rain_repository.is_raining(_estacao, date)
         if result:
             return True
         return False
@@ -52,7 +51,7 @@ class Chuva:
     async def _rain_intensity(
         self, data: str, intensity: tuple[float], hora: str = None
     ) -> bool:
-        if await self.chuva_repository.rain_intensity(
+        if await self.rain_repository.rain_intensity(
             "IRAJA", self._to_datetime_or_date(data, hora), intensity
         ):
             return True

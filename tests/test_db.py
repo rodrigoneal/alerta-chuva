@@ -1,7 +1,9 @@
-import pytest
-from transbordou.domain.entities.rain import RainCreate, RainUpdate
-from transbordou.domain.repositories.chuva_repository import ChuvaRepository
 from datetime import datetime
+
+import pytest
+
+from transbordou.domain.entities.rain import RainCreate, RainUpdate
+from transbordou.domain.repositories.rain_repository import RainRepository
 
 
 @pytest.fixture
@@ -41,6 +43,6 @@ async def test_se_atualiza_chuva(acumulado_update, chuva_repository):
 
 
 async def test_se_deleta_chuva(session):
-    chuva_repository = ChuvaRepository(session)
+    chuva_repository = RainRepository(session)
     chuva = await chuva_repository.delete(1)
     assert chuva.id == 1

@@ -1,9 +1,12 @@
 import asyncio
 from pathlib import Path
+
 import pytest
+from sqlalchemy.ext.asyncio import (AsyncEngine, async_sessionmaker,
+                                    create_async_engine)
+
 from transbordou.domain.domain import Base
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine, AsyncEngine
-from transbordou.domain.repositories.chuva_repository import ChuvaRepository
+from transbordou.domain.repositories.rain_repository import RainRepository
 
 
 @pytest.fixture(scope="module")
@@ -22,5 +25,5 @@ async def session() -> AsyncEngine:
         Path("test.db").unlink()
 
 @pytest.fixture
-async def chuva_repository(session) -> ChuvaRepository:
-    return ChuvaRepository(session)
+async def chuva_repository(session) -> RainRepository:
+    return RainRepository(session)
