@@ -6,6 +6,16 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - name: Install depencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y 
+          sudo apt install libgconf-2-4 libatk1.0-0 libatk-bridge2.0-0 libgdk-pixbuf2.0-0 libgtk-3-0 libgbm-dev libnss3-dev libxss-dev -y
+          sudo apt-get install libasound2 -y
+
+
+      - uses: browser-actions/setup-chrome@v1
+      - run: chrome --version
       #----------------------------------------------
       #       check-out repo and set-up python
       #----------------------------------------------
@@ -36,6 +46,4 @@ jobs:
       #----------------------------------------------
       - name: Run tests
         run: |
-          poetry shell
-          pytest tests/
-          coverage report
+          poetry run pytest -vv
