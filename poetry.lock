@@ -975,12 +975,13 @@ develop = false
 [package.dependencies]
 selenium = "^4.1.0"
 selenium-recaptcha-solver = "^1.8.1"
+webdriver-manager = "^4.0.1"
 
 [package.source]
 type = "git"
-url = "https://github.com/rodrigoneal/selenium_tools"
+url = "https://github.com/rodrigoneal/selenium-tools"
 reference = "HEAD"
-resolved_reference = "574df86316886ff1d0592d4f91992dd8474d6298"
+resolved_reference = "f2a358d913e05de3dda98263f17299cc6d926e94"
 
 [[package]]
 name = "six"
@@ -1268,4 +1269,4 @@ h11 = ">=0.9.0,<1"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "e57283151438c31437c96bd9d500f155b9a35f956075926eb8ea75bd27d70961"
+content-hash = "275a86f965a4cd74a48f57236cd5d29457131d7bcda5bd37fb043b33647efd41"
