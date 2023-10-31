@@ -7,6 +7,7 @@ from transbordou.domain.domain import Base
 
 connection_pool_size = min(32, os.cpu_count() + 4)
 
+
 class Settings:
     asyncpg_url: str = os.getenv("SQL_URL") or "sqlite+aiosqlite:///:memory:"
 
@@ -19,7 +20,9 @@ def get_settings():
 settings = get_settings()
 
 
-engine = create_async_engine(settings.asyncpg_url, pool_size=connection_pool_size, max_overflow=0)
+engine = create_async_engine(
+    settings.asyncpg_url, pool_size=connection_pool_size, max_overflow=0
+)
 
 
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)

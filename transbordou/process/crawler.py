@@ -5,7 +5,12 @@ from pathlib import Path
 import httpx
 from selenium_tools.selenium_driver import SeleniumDriver
 
-from transbordou.coletar import coletar, parser_txt_to_DataFrame, unzip_all_file
+from transbordou.coletar import (
+    coletar,
+    extract_name_from_txt,
+    parser_txt_to_DataFrame,
+    unzip_all_file,
+)
 from transbordou.domain.entities.rain import RainCreate
 from transbordou.domain.repositories.rain_repository import RainRepository
 from transbordou.locais import Local
@@ -53,26 +58,43 @@ class Crawler:
         self.rains.extend(rains)
         return self
 
-    def get_rainfall_history(self, estacao: str, year: int) -> "Crawler":
+    def get_zips(self):
+        for zip in Path(self.download_folder).glob("*.txt"):
+            yield zip
+
+    async def get_rainfall_history(self, estacao: str, year: int) -> "Crawler":
         driver = self.driver()
         station = Local[estacao.upper()].value
         get_history = GetHistory(driver)
         get_history.download_history.download_specific_station(year, station)
         driver.quit()
         unzip_all_file(self.download_folder)
-        df = parser_txt_to_DataFrame(self.download_folder)
-        chuvas = df.to_dict("records")
-        [self.rains.append(RainCreate(**chuva)) for chuva in chuvas]
+        for zip in self.get_zips():
+            station_name = extract_name_from_txt(str(zip.name))
+            df = parser_txt_to_DataFrame(zip, station_name)
+            if not df:
+                return
+            chuvas = df.to_dict("records")
+            chuvas = df.to_dict("records")
+            self.rains = [RainCreate(**chuva) for chuva in chuvas]
+            await self.save_rain()
         return self
 
-    def get_rainfall_history_all_stations(self, year: int) -> "Crawler":
+    async def get_rainfall_history_all_stations(self, year: int) -> "Crawler":
         driver = self.driver()
         get_history = GetHistory(driver)
         get_history.download_history.download_history_all_stations(year)
         driver.quit()
         unzip_all_file(self.download_folder)
-        df = parser_txt_to_DataFrame(self.download_folder)
-        breakpoint()
+        for zip in self.get_zips():
+            breakpoint()
+            station_name = extract_name_from_txt(str(zip.name))
+            df = parser_txt_to_DataFrame(zip, station_name)
+            if not df:
+                return
+            chuvas = df.to_dict("records")
+            self.rains = [RainCreate(**chuva) for chuva in chuvas]
+            await self.save_rain()
         return self
 
     async def save_rain(self):

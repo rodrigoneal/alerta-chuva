@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Annotated
 
 from dateutil import parser
-from pydantic import BaseModel, BeforeValidator, constr
+from pydantic import BaseModel, BeforeValidator
 
 
 def parser_float(text: str):

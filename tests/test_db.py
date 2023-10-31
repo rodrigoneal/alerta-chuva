@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import pytest
 
 from transbordou.domain.entities.rain import RainCreate, RainUpdate
@@ -27,7 +25,6 @@ def acumulado_update():
 
 
 async def test_se_cria_chuva(acumulado, chuva_repository):
-
     chuva = await chuva_repository.create(acumulado)
     assert chuva.id == 1
 

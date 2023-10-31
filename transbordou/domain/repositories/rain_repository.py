@@ -2,6 +2,7 @@ from datetime import date, datetime
 
 from sqlalchemy import delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncEngine
+from sqlalchemy.exc import IntegrityError
 
 from transbordou.domain.domain import ChuvaModel
 from transbordou.domain.entities.rain import RainBase, RainUpdate
@@ -15,9 +16,14 @@ class RainRepository:
         model = ChuvaModel(**schema.model_dump())
         async with self.session as session:
             session.add(model)
-            await session.commit()
-            await session.refresh(model)
-            return model
+            try:
+                await session.commit()
+                await session.refresh(model)
+                return model
+            except IntegrityError as e:
+                _e = e
+                breakpoint()
+                await session.rollback()
 
     async def read(self, estacao: str):
         query = select(ChuvaModel).where(ChuvaModel.estacao == estacao)
@@ -68,7 +74,7 @@ class RainRepository:
         query = select(ChuvaModel).where(
             (ChuvaModel.estacao == estacao)
             & (param == data)
-        & (ChuvaModel.quantidade_1_h.between(*intensity))
+            & (ChuvaModel.quantidade_1_h.between(*intensity))
         )
 
         async with self.session as session:

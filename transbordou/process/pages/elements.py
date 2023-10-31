@@ -1,4 +1,5 @@
 from time import sleep
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from selenium_tools.page_objects import Element
@@ -6,8 +7,9 @@ from selenium_tools.page_objects import Element
 
 class DowloandHistory(Element):
     btn_submit = (By.XPATH, "/html/body/div/form/input[2]")
-    checkbox_all_stations = (By.ID, "all_check") 
+    checkbox_all_stations = (By.ID, "all_check")
     select_year_all_stations = (By.ID, "all_choice")
+
     def download_specific_station(self, year: int, station: int):
         select_year = (By.ID, f"id_{station}-choice")
         select_station = (By.ID, f"id_{station}-check")
@@ -29,5 +31,3 @@ class DowloandHistory(Element):
         select.select_by_value(str(year))
         self.find_element(self.btn_submit).click()
         sleep(5)
-
-

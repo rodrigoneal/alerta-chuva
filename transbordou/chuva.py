@@ -1,7 +1,6 @@
 from datetime import date, datetime
 
 from dateutil import parser
-from sqlalchemy.ext.asyncio import AsyncEngine
 
 from transbordou.domain.entities.rain import RainRead
 from transbordou.domain.repositories.rain_repository import RainRepository

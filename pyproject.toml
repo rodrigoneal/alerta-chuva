@@ -28,6 +28,7 @@ pytest-asyncio = "^0.21.1"
 
 [tool.poetry.group.linter.dependencies]
 isort = "^5.12.0"
+ruff = "^0.1.3"
 
 [build-system]
 requires = ["poetry-core"]

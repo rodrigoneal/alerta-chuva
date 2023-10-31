@@ -21,13 +21,18 @@ async def test_se_faz_o_crawler(httpx_mock: HTTPXMock, html_response, crawler: C
     await crawler.scrape()
     assert crawler.rains[0].estacao == esperado
 
+
 # async def test_se_salva_no_banco_de_dados(crawler: Crawler, chuva_repository):
 #     await crawler.scrape()
 #     await crawler.save_rain()
 #     assert await chuva_repository.read("IRAJA")
 
-def test_se_baixa_historico__de_uma_estacao_pluviometricos(crawler: Crawler):
-    crawler = crawler.get_rainfall_history(estacao="IRAJA", year=2023)
-    
-def test_se_baixa_historico_pluviometricos_todas_estacoes(crawler: Crawler):
-    assert crawler.get_rainfall_history_all_stations(1998)
+
+async def test_se_baixa_historico__de_uma_estacao_pluviometricos(crawler: Crawler):
+    crawler = await crawler.get_rainfall_history(estacao="IRAJA", year=2023)
+    breakpoint()
+
+
+async def test_se_baixa_historico_pluviometricos_todas_estacoes(crawler: Crawler):
+    crawler = await crawler.get_rainfall_history_all_stations(1998)
+    breakpoint()
