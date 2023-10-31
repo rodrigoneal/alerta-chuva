@@ -1,20 +1,17 @@
 import asyncio
+import shutil
+import tempfile
 from itertools import chain
 from pathlib import Path
 
 import httpx
 from selenium_tools.selenium_driver import SeleniumDriver
 
-from transbordou.coletar import (
-    coletar,
-    extract_name_from_txt,
-    parser_txt_to_DataFrame,
-    unzip_all_file,
-)
+from transbordou.coletar import (coletar, extract_name_from_txt,
+                                 parser_txt_to_DataFrame, unzip_all_file)
 from transbordou.domain.entities.rain import RainCreate
 from transbordou.domain.repositories.rain_repository import RainRepository
 from transbordou.locais import Local
-from transbordou.process.pages.page import GetHistory
 
 
 class Crawler:
@@ -27,14 +24,11 @@ class Crawler:
         self.rain_repository = rain_repository
         self.endpoint = "/dados/h24/{}/"
         self.rains = []
-        self.driver = self._get_driver
+        self.download_folder = tempfile.mkdtemp()
 
     def _get_driver(self):
-        download_folder = Path("downloads")
-        download_folder.mkdir(parents=True, exist_ok=True)
-        self.download_folder = str(download_folder.absolute())
         driver = SeleniumDriver(
-            download_path=self.download_folder, log=False, headless=True
+            download_path=self.download_folder, log=False, headless=False
         ).get_driver()
         driver.get(self.rainfall_history_url)
         return driver
@@ -62,40 +56,31 @@ class Crawler:
         for zip in Path(self.download_folder).glob("*.txt"):
             yield zip
 
-    async def get_rainfall_history(self, estacao: str, year: int) -> "Crawler":
-        driver = self.driver()
-        station = Local[estacao.upper()].value
-        get_history = GetHistory(driver)
-        get_history.download_history.download_specific_station(year, station)
-        driver.quit()
-        unzip_all_file(self.download_folder)
-        for zip in self.get_zips():
-            station_name = extract_name_from_txt(str(zip.name))
-            df = parser_txt_to_DataFrame(zip, station_name)
-            if not df:
-                return
-            chuvas = df.to_dict("records")
-            chuvas = df.to_dict("records")
-            self.rains = [RainCreate(**chuva) for chuva in chuvas]
-            await self.save_rain()
-        return self
+    async def download_rainfall_history(
+        self, func: callable, *args, **kwargs
+    ) -> "Crawler":
+        try:
+            driver = self._get_driver()
+            func(driver, *args, **kwargs)
+            driver.quit()
+            unzip_all_file(self.download_folder)
+            for zip in self.get_zips():
+                station_name = extract_name_from_txt(str(zip.name))
+                df = parser_txt_to_DataFrame(zip, station_name)
+                if df.empty or df is None:
+                    continue
+                chuvas = df.to_dict("records")
+                rains = [RainCreate(**chuva) for chuva in chuvas]
+                await self.save_many(rains)
+            
+            return self
+        finally:
+            shutil.rmtree(self.download_folder, ignore_errors=True)
 
-    async def get_rainfall_history_all_stations(self, year: int) -> "Crawler":
-        driver = self.driver()
-        get_history = GetHistory(driver)
-        get_history.download_history.download_history_all_stations(year)
-        driver.quit()
-        unzip_all_file(self.download_folder)
-        for zip in self.get_zips():
-            breakpoint()
-            station_name = extract_name_from_txt(str(zip.name))
-            df = parser_txt_to_DataFrame(zip, station_name)
-            if not df:
-                return
-            chuvas = df.to_dict("records")
-            self.rains = [RainCreate(**chuva) for chuva in chuvas]
-            await self.save_rain()
-        return self
 
-    async def save_rain(self):
+
+    async def save(self):
         [await self.rain_repository.create(rain) for rain in self.rains]
+    
+    async def save_many(self, rains: list[RainCreate]):
+        await self.rain_repository.create_many(rains)

@@ -1,8 +1,8 @@
 from datetime import date, datetime
 
 from sqlalchemy import delete, func, select, update
-from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 from transbordou.domain.domain import ChuvaModel
 from transbordou.domain.entities.rain import RainBase, RainUpdate
@@ -24,6 +24,12 @@ class RainRepository:
                 _e = e
                 breakpoint()
                 await session.rollback()
+    
+    async def create_many(self, schema: list[RainBase]):
+        models = [ChuvaModel(**model.model_dump()) for model in schema]
+        async with self.session as session:
+            session.add_all(models)
+            await session.commit()
 
     async def read(self, estacao: str):
         query = select(ChuvaModel).where(ChuvaModel.estacao == estacao)

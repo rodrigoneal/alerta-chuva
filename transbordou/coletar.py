@@ -1,8 +1,8 @@
 import re
 import zipfile
 from pathlib import Path
-import numpy as np
 
+import numpy as np
 import pandas as pd
 from bs4 import BeautifulSoup
 from unidecode import unidecode

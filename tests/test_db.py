@@ -1,7 +1,6 @@
 import pytest
 
 from transbordou.domain.entities.rain import RainCreate, RainUpdate
-from transbordou.domain.repositories.rain_repository import RainRepository
 
 
 @pytest.fixture
@@ -29,17 +28,16 @@ async def test_se_cria_chuva(acumulado, chuva_repository):
     assert chuva.id == 1
 
 
-async def test_se_consulta_chuva(chuva_repository):
+async def test_se_consulta_chuva(chuva_repository, load_database):
     chuva = await chuva_repository.read("IRAJA")
     assert chuva[0].estacao == "IRAJA"
 
 
-async def test_se_atualiza_chuva(acumulado_update, chuva_repository):
+async def test_se_atualiza_chuva(acumulado_update, chuva_repository, load_database):
     chuva = await chuva_repository.update(acumulado_update, 1)
     assert chuva.estacao == "PAVUNA"
 
 
-async def test_se_deleta_chuva(session):
-    chuva_repository = RainRepository(session)
+async def test_se_deleta_chuva(session,chuva_repository, load_database):
     chuva = await chuva_repository.delete(1)
     assert chuva.id == 1
