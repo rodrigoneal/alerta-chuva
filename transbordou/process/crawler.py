@@ -67,7 +67,7 @@ class Crawler:
             for zip in self.get_zips():
                 station_name = extract_name_from_txt(str(zip.name))
                 df = parser_txt_to_DataFrame(zip, station_name)
-                if df.empty or df is None:
+                if df is None or df.empty:
                     continue
                 chuvas = df.to_dict("records")
                 rains = [RainCreate(**chuva) for chuva in chuvas]

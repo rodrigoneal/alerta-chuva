@@ -5,6 +5,10 @@ from typing import Annotated
 from dateutil import parser
 from pydantic import BaseModel, BeforeValidator
 
+from transbordou.locais import Local
+
+def station_to_int(text: str):
+    return Local[text.upper()].value
 
 def parser_float(text: str):
     if isinstance(text, float):
@@ -18,7 +22,8 @@ def nome_estacão(texto: str):
     padrao = r"ESTACAO\s+(.*)"
     estacao = re.search(padrao, texto)
     if estacao:
-        return estacao.group(1).strip()
+        estacao = estacao.group(1).strip()
+        return estacao.strip()
     else:
         return texto
 
@@ -34,7 +39,7 @@ class RainBase(BaseModel):
 
 
 class RainCreate(RainBase):
-    estacao: Annotated[str, BeforeValidator(nome_estacão)]
+    estacao: Annotated[int, BeforeValidator(nome_estacão)]
     data: Annotated[datetime, BeforeValidator(lambda data: parser.parse(data))]
     quantidade_15_min: Annotated[float, BeforeValidator(parser_float)]
     quantidade_1_h: Annotated[float, BeforeValidator(parser_float)]

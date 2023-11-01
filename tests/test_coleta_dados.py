@@ -9,6 +9,7 @@ def chuva(chuva_repository):
 
 
 async def test_se_pega_chuva_pela_data(chuva: Chuva, load_database):
+    
     assert await chuva.choveu(estacao="IRAJA", data="29/10/2023") is True
 
 

@@ -21,8 +21,6 @@ class RainRepository:
                 await session.refresh(model)
                 return model
             except IntegrityError as e:
-                _e = e
-                breakpoint()
                 await session.rollback()
 
     async def create_many(self, schema: list[RainBase]):
@@ -33,6 +31,12 @@ class RainRepository:
 
     async def read(self, estacao: str):
         query = select(ChuvaModel).where(ChuvaModel.estacao == estacao)
+        async with self.session as session:
+            result = await session.execute(query)
+            return result.scalars().all()
+        
+    async def read_by_id(self, _id: str):
+        query = select(ChuvaModel).where(ChuvaModel.id == _id)
         async with self.session as session:
             result = await session.execute(query)
             return result.scalars().all()

@@ -1,3 +1,4 @@
+from pathlib import Path
 import pytest
 from sqlalchemy.ext.asyncio import (AsyncEngine, async_sessionmaker,
                                     create_async_engine)
@@ -27,11 +28,14 @@ async def load_database(html_response, chuva_repository):
 
 @pytest.fixture
 async def session() -> AsyncEngine:
-    engine = create_async_engine("sqlite+aiosqlite:///:memory:")
+    Path("test.db").unlink(missing_ok=True)
+    engine = create_async_engine("sqlite+aiosqlite:///test.db", echo=True)
     Session = async_sessionmaker(bind=engine, expire_on_commit=False)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         yield Session()
+        await conn.run_sync(Base.metadata.drop_all)
+    Path("test.db").unlink(missing_ok=True)
 
 
 @pytest.fixture

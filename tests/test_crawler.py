@@ -1,3 +1,4 @@
+from time import sleep
 import httpx
 import pytest
 from pytest_httpx import HTTPXMock
@@ -38,18 +39,19 @@ async def test_se_salva_no_banco_de_dados(crawler: Crawler, chuva_repository):
     assert await chuva_repository.read("IRAJA")
 
 
-@pytest.mark.skipif(site_online, reason="Temporariamente desativado")
+# @pytest.mark.skipif(site_online, reason="Temporariamente desativado")
 async def test_se_baixa_historico_de_uma_estacao_pluviometricos(
     crawler: Crawler, chuva_repository: RainRepository
 ):
     crawler = await crawler.download_rainfall_history(
         func=download_rainfall_history_one_station, estacao="IRAJA", year=2023
     )
+
     chuvas = await chuva_repository.read("IRAJA")
     assert len(chuvas) > 100
 
 
-@pytest.mark.skipif(site_online, reason="Temporariamente desativado")
+# @pytest.mark.skipif(site_online, reason="Temporariamente desativado")
 async def test_se_baixa_historico_pluviometricos_todas_estacoes(
     crawler: Crawler, chuva_repository: RainRepository
 ):
@@ -57,4 +59,5 @@ async def test_se_baixa_historico_pluviometricos_todas_estacoes(
         func=download_rainfall_history_all_stations, year=1998
     )
     chuvas = await chuva_repository.read("IRAJA")
+    
     assert len(chuvas) > 100
