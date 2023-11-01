@@ -17,6 +17,8 @@ pydantic = "^2.4.2"
 webdriver-manager = "^4.0.1"
 pandas = "^2.1.2"
 selenium-tools = {git = "https://github.com/rodrigoneal/selenium-tools"}
+opencv-python = "^4.8.1.78"
+pillow = "^10.1.0"
 
 
 [tool.poetry.group.dev.dependencies]

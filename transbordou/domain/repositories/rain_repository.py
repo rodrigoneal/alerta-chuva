@@ -24,7 +24,7 @@ class RainRepository:
                 _e = e
                 breakpoint()
                 await session.rollback()
-    
+
     async def create_many(self, schema: list[RainBase]):
         models = [ChuvaModel(**model.model_dump()) for model in schema]
         async with self.session as session:

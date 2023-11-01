@@ -38,6 +38,6 @@ async def test_se_atualiza_chuva(acumulado_update, chuva_repository, load_databa
     assert chuva.estacao == "PAVUNA"
 
 
-async def test_se_deleta_chuva(session,chuva_repository, load_database):
+async def test_se_deleta_chuva(session, chuva_repository, load_database):
     chuva = await chuva_repository.delete(1)
     assert chuva.id == 1

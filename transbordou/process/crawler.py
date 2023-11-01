@@ -72,15 +72,13 @@ class Crawler:
                 chuvas = df.to_dict("records")
                 rains = [RainCreate(**chuva) for chuva in chuvas]
                 await self.save_many(rains)
-            
+
             return self
         finally:
             shutil.rmtree(self.download_folder, ignore_errors=True)
 
-
-
     async def save(self):
         [await self.rain_repository.create(rain) for rain in self.rains]
-    
+
     async def save_many(self, rains: list[RainCreate]):
         await self.rain_repository.create_many(rains)

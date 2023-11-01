@@ -30,5 +30,7 @@ async def test_se_dados_informa_que_houve_chuva_forte(chuva: Chuva, load_databas
     assert await chuva.choveu_forte("29/10/2023") is False
 
 
-async def test_se_dados_informa_que_houve_chuva_muito_forte(chuva: Chuva, load_database):
+async def test_se_dados_informa_que_houve_chuva_muito_forte(
+    chuva: Chuva, load_database
+):
     assert await chuva.choveu_muito_forte("29/10/2023") is False
