@@ -20,7 +20,7 @@ def acumulado():
 
 @pytest.fixture
 def acumulado_update():
-    return RainUpdate(estacao="PAVUNA")
+    return RainUpdate(estacao=55)
 
 
 async def test_se_cria_chuva(acumulado, chuva_repository):
@@ -29,13 +29,13 @@ async def test_se_cria_chuva(acumulado, chuva_repository):
 
 
 async def test_se_consulta_chuva(chuva_repository, load_database):
-    chuva = await chuva_repository.read("IRAJA")
-    assert chuva[0].estacao == "IRAJA"
+    chuva = await chuva_repository.read(11)
+    assert chuva[0].estacao == 11
 
 
 async def test_se_atualiza_chuva(acumulado_update, chuva_repository, load_database):
     chuva = await chuva_repository.update(acumulado_update, 1)
-    assert chuva.estacao == "PAVUNA"
+    assert chuva.estacao == 55
 
 
 async def test_se_deleta_chuva(session, chuva_repository, load_database):

@@ -20,14 +20,17 @@ class RainRepository:
                 await session.commit()
                 await session.refresh(model)
                 return model
-            except IntegrityError as e:
+            except IntegrityError:
                 await session.rollback()
 
     async def create_many(self, schema: list[RainBase]):
         models = [ChuvaModel(**model.model_dump()) for model in schema]
         async with self.session as session:
             session.add_all(models)
-            await session.commit()
+            try:
+                await session.commit()
+            except IntegrityError:
+                await session.rollback()
 
     async def read(self, estacao: str):
         query = select(ChuvaModel).where(ChuvaModel.estacao == estacao)

@@ -2,10 +2,8 @@ import re
 import zipfile
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 from bs4 import BeautifulSoup
-from unidecode import unidecode
 
 from transbordou.domain.entities.rain import RainCreate
 
@@ -16,7 +14,7 @@ def coletar(str: str):
     th_elements = soup.find_all("th")
     th_with_colspan = [th for th in th_elements if th.has_attr("colspan")]
     estacao = th_with_colspan[0].text
-    estacao = unidecode(estacao.upper())
+    estacao = estacao
     acumulados = []
     for row in rows:
         # Encontre todas as colunas (td) na linha
@@ -24,24 +22,16 @@ def coletar(str: str):
         if not columns:
             continue
         # Acesse as informações que você deseja com base na posição das colunas
-        data = columns[0].text.strip()
-        hora = columns[1].text.strip()
-        quantidade_15_min = columns[2].text
-        quantidade_1_h = columns[3].text
-        quantidade_4_h = columns[4].text.strip()
-        quantidade_24_h = columns[5].text.strip()
-        quantidade_96_h = columns[6].text.strip()
-        quantidade_mes = columns[7].text.strip()
-        acumulado = RainCreate(
-            data=data + " " + hora,
-            estacao=estacao,
-            quantidade_15_min=quantidade_15_min,
-            quantidade_1_h=quantidade_1_h,
-            quantidade_4_h=quantidade_4_h,
-            quantidade_24_h=quantidade_24_h,
-            quantidade_96_h=quantidade_96_h,
-            quantidade_mes=quantidade_mes,
-        )
+        _temp = dict(
+        data = columns[0].text.strip() + " " + columns[1].text.strip(),
+        estacao = estacao,
+        quantidade_15_min = columns[2].text,
+        quantidade_1_h = columns[3].text,
+        quantidade_4_h = columns[4].text.strip(),
+        quantidade_24_h = columns[5].text.strip(),
+        quantidade_96_h = columns[6].text.strip(),
+        quantidade_mes = columns[7].text.strip())
+        acumulado = RainCreate(**_temp)
         acumulados.append(acumulado)
     return acumulados
 
@@ -52,6 +42,7 @@ def unzip_all_file(file_name, delete_after_extract: bool = True):
             zip_ref.extractall(file_name)
         if delete_after_extract:
             file.unlink()
+    return file_name
 
 
 def parser_txt_to_DataFrame(file: str, station_name: str):
@@ -73,7 +64,7 @@ def parser_txt_to_DataFrame(file: str, station_name: str):
     df.rename(columns=dict(zip(df.columns, columns)), inplace=True)
     df["data"] = df["data"] + " " + df["estacao"]
     df["estacao"] = station_name
-    df["quantidade_mes"] = np.nan
+    df["quantidade_mes"] = None
     df["quantidade_15_min"] = pd.to_numeric(df["quantidade_15_min"], errors="coerce")
     return df
 

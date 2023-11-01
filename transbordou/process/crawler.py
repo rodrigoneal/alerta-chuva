@@ -28,7 +28,7 @@ class Crawler:
 
     def _get_driver(self):
         driver = SeleniumDriver(
-            download_path=self.download_folder, log=False, headless=False
+            download_path=self.download_folder, log=False, headless=True
         ).get_driver()
         driver.get(self.rainfall_history_url)
         return driver
@@ -52,8 +52,8 @@ class Crawler:
         self.rains.extend(rains)
         return self
 
-    def get_zips(self):
-        for zip in Path(self.download_folder).glob("*.txt"):
+    def get_zips(self, path):
+        for zip in Path(path).glob("*.txt"):
             yield zip
 
     async def download_rainfall_history(
@@ -63,8 +63,8 @@ class Crawler:
             driver = self._get_driver()
             func(driver, *args, **kwargs)
             driver.quit()
-            unzip_all_file(self.download_folder)
-            for zip in self.get_zips():
+            path = unzip_all_file(self.download_folder)
+            for zip in self.get_zips(path):
                 station_name = extract_name_from_txt(str(zip.name))
                 df = parser_txt_to_DataFrame(zip, station_name)
                 if df is None or df.empty:
