@@ -1,14 +1,14 @@
-from unittest.mock import Mock, patch
 import httpx
 import pytest
 from pytest_httpx import HTTPXMock
-from transbordou.coletar import unzip_all_file
 
 
 from transbordou.domain.repositories.rain_repository import RainRepository
 from transbordou.process.crawler import Crawler
-from transbordou.utils.crawler import (download_rainfall_history_all_stations,
-                                       download_rainfall_history_one_station)
+from transbordou.utils.crawler import (
+    download_rainfall_history_all_stations,
+    download_rainfall_history_one_station,
+)
 
 
 def site_online():
@@ -34,33 +34,33 @@ async def test_se_faz_o_crawler(httpx_mock: HTTPXMock, html_response, crawler: C
     assert crawler.rains[0].estacao == esperado
 
 
-# @pytest.mark.slow
-# async def test_se_salva_no_banco_de_dados(crawler: Crawler, chuva_repository):
-#     await crawler.scrape()
-#     await crawler.save()
-#     assert await chuva_repository.read(11)
+@pytest.mark.slow
+async def test_se_salva_no_banco_de_dados(crawler: Crawler, chuva_repository):
+    await crawler.scrape()
+    await crawler.save()
+    assert await chuva_repository.read(11)
 
 
 @pytest.mark.skipif(site_online(), reason="Temporariamente desativado")
 async def test_se_baixa_historico_de_uma_estacao_pluviometricos(
+    chuva_repository: RainRepository, mocker
+):
+    mocker.patch("transbordou.coletar.unzip_all_file", return_value="tests/zips")
+    crawler = Crawler(chuva_repository)
+    crawler = await crawler.download_rainfall_history(
+        func=download_rainfall_history_one_station, estacao="IRAJA", year=2023
+    )
+    chuvas = await chuva_repository.read(11)
+    assert len(chuvas) > 100
+
+
+@pytest.mark.skip(reason="Demora pra caralho, sem paciencia")
+async def test_se_baixa_historico_pluviometricos_todas_estacoes(
+    crawler: Crawler,
     chuva_repository: RainRepository,
 ):
-    with patch('transbordou.coletar.unzip_all_file', return_value="tests/data") as mock_unzip:
-        mock_unzip.return_value = "tests/data"
-        crawler = Crawler(chuva_repository)
-        crawler = await crawler.download_rainfall_history(
-            func=download_rainfall_history_one_station, estacao="IRAJA", year=2023
-        )
-        chuvas = await chuva_repository.read(11)
-        assert len(chuvas) > 100
-
-
-# @pytest.mark.skipif(site_online(), reason="Temporariamente desativado")
-# async def test_se_baixa_historico_pluviometricos_todas_estacoes(
-#     crawler: Crawler, chuva_repository: RainRepository
-# ):
-#     crawler = await crawler.download_rainfall_history(
-#         func=download_rainfall_history_all_stations, year=1998
-#     )
-#     chuvas = await chuva_repository.read(11)
-#     assert len(chuvas) > 100
+    crawler = await crawler.download_rainfall_history(
+        func=download_rainfall_history_all_stations, year=1998
+    )
+    chuvas = await chuva_repository.read(11)
+    assert len(chuvas) > 100

@@ -13,12 +13,14 @@ def normalize_station_name(text: str) -> str:
         return upper_text.split("/")[1].strip()
     return upper_text
 
+
 def station_to_int(text: str) -> int:
     try:
         return Local[text].value
     except KeyError:
-        if text == 'RECREIO':
+        if text == "RECREIO":
             return Local.RECREIO_DOS_BANDEIRANTES.value
+
 
 def parser_float(text: str) -> float:
     if isinstance(text, float):
@@ -36,6 +38,7 @@ def extrair_nome_de_estacao(text: str):
         return estacao.strip()
     else:
         return text
+
 
 def pipeline_text(text: str):
     station = normalize_station_name(text)

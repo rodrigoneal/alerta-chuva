@@ -16,17 +16,19 @@ class Chuva:
     def __init__(self, rain_repository: RainRepository):
         self._chuva: list[RainRead] = None
         self.rain_repository = rain_repository
-    
+
     @staticmethod
-    def _rain_intensity(rain_intensity:str):
-        def func(_:callable):
-            async def inner(self,**kwargs):
+    def _rain_intensity(rain_intensity: str):
+        def func(_: callable):
+            async def inner(self, **kwargs):
                 station = kwargs["station"]
                 if isinstance(station, str):
                     station = Local[station].value
-                
+
                 if await self.rain_repository.rain_intensity(
-                    station, self._to_datetime_or_date(kwargs.get("data"), kwargs.get("hora")), getattr(self, rain_intensity)
+                    station,
+                    self._to_datetime_or_date(kwargs.get("data"), kwargs.get("hora")),
+                    getattr(self, rain_intensity),
                 ):
                     return True
                 return False
@@ -54,42 +56,24 @@ class Chuva:
 
     @_rain_intensity("chuva_fraca")
     async def choveu_fraca(
-        self,*, station: str | int, data: str, hora: str = None
+        self, *, station: str | int, data: str, hora: str = None
     ) -> bool:
-        ...
+        ...  # pragma: no cover
 
     @_rain_intensity("chuva_moderada")
     async def choveu_moderado(
-        self,*, station: str | int, data: str, hora: str = None
+        self, *, station: str | int, data: str, hora: str = None
     ) -> bool:
-        ...
-
+        ...  # pragma: no cover
 
     @_rain_intensity("chuva_forte")
     async def choveu_forte(
-        self,*, station: str | int, data: str, hora: str = None
+        self, *, station: str | int, data: str, hora: str = None
     ) -> bool:
-        ...
+        ...  # pragma: no cover
+
     @_rain_intensity("chuva_muito_forte")
     async def choveu_muito_forte(
-        self,*, station: str | int, data: str, hora: str = None
+        self, *, station: str | int, data: str, hora: str = None
     ) -> bool:
-        ...
-
-
-
-    # async def _rain_intensity(
-    #     self, data: str, intensity: tuple[float], hora: str = None
-    # ) -> bool:
-    #     if await self.rain_repository.rain_intensity(
-    #         "IRAJA", self._to_datetime_or_date(data, hora), intensity
-    #     ):
-    #         return True
-    #     return False
-
-
-
-    def maior_acumulado(self, data: str) -> RainRead:
-        date = parser.parse(data).date()
-        chuvas = [chuva for chuva in self._chuva if chuva.data.date() == date]
-        return max(chuvas, key=lambda chuva: chuva.quantidade_1_h)
+        ...  # pragma: no cover

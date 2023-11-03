@@ -1,7 +1,5 @@
-from pathlib import Path
 import pytest
-from sqlalchemy.ext.asyncio import (AsyncEngine, async_sessionmaker,
-                                    create_async_engine)
+from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine
 
 from transbordou.coletar import coletar
 from transbordou.domain.domain import Base
@@ -26,9 +24,9 @@ async def load_database(html_response, chuva_repository):
     [await chuva_repository.create(dado) for dado in dados]
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 async def session() -> AsyncEngine:
-    engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=True)
+    engine = create_async_engine("sqlite+aiosqlite:///test.db", echo=True)
     Session = async_sessionmaker(bind=engine, expire_on_commit=False)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

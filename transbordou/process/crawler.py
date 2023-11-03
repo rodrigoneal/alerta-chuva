@@ -7,8 +7,12 @@ from pathlib import Path
 import httpx
 from selenium_tools.selenium_driver import SeleniumDriver
 
-from transbordou.coletar import (coletar, extract_name_from_txt,
-                                 parser_txt_to_DataFrame, unzip_all_file)
+from transbordou.coletar import (
+    coletar,
+    extract_name_from_txt,
+    parser_txt_to_DataFrame,
+    unzip_all_file,
+)
 from transbordou.domain.entities.rain import RainCreate
 from transbordou.domain.repositories.rain_repository import RainRepository
 from transbordou.locais import Local
@@ -72,7 +76,6 @@ class Crawler:
                 chuvas = df.to_dict("records")
                 rains = [RainCreate(**chuva) for chuva in chuvas]
                 await self.save_many(rains)
-
             return self
         finally:
             shutil.rmtree(self.download_folder, ignore_errors=True)

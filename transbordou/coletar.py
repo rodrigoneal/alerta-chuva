@@ -23,14 +23,15 @@ def coletar(str: str):
             continue
         # Acesse as informações que você deseja com base na posição das colunas
         _temp = dict(
-        data = columns[0].text.strip() + " " + columns[1].text.strip(),
-        estacao = estacao,
-        quantidade_15_min = columns[2].text,
-        quantidade_1_h = columns[3].text,
-        quantidade_4_h = columns[4].text.strip(),
-        quantidade_24_h = columns[5].text.strip(),
-        quantidade_96_h = columns[6].text.strip(),
-        quantidade_mes = columns[7].text.strip())
+            data=columns[0].text.strip() + " " + columns[1].text.strip(),
+            estacao=estacao,
+            quantidade_15_min=columns[2].text,
+            quantidade_1_h=columns[3].text,
+            quantidade_4_h=columns[4].text.strip(),
+            quantidade_24_h=columns[5].text.strip(),
+            quantidade_96_h=columns[6].text.strip(),
+            quantidade_mes=columns[7].text.strip(),
+        )
         acumulado = RainCreate(**_temp)
         acumulados.append(acumulado)
     return acumulados

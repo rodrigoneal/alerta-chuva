@@ -8,6 +8,7 @@ from transbordou.utils.text import parser_float, pipeline_text
 
 volume_type = Annotated[float | None, BeforeValidator(parser_float)]
 
+
 class RainBase(BaseModel):
     data: datetime
     quantidade_15_min: float

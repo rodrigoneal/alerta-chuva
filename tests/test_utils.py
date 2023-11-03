@@ -1,4 +1,3 @@
-import math
 import pytest
 from transbordou.locais import Local
 
@@ -9,7 +8,6 @@ from transbordou.utils.text import (
     pipeline_text,
     station_to_int,
 )
-import numpy as np
 
 
 def estacao_nome():
@@ -32,7 +30,9 @@ def test_se_transforma_o_nome_da_estacao_em_int(valor, esperado):
     assert station_to_int(station) == esperado
 
 
-@pytest.mark.parametrize("valor, esperado", [(5.1, 5.1), ("ND", None), ("0.0", 0.0), (None, None)])
+@pytest.mark.parametrize(
+    "valor, esperado", [(5.1, 5.1), ("ND", None), ("0.0", 0.0), (None, None)]
+)
 def test_se_converte_volume_de_chuva_para_float(valor, esperado):
     assert parser_float(valor) == esperado
 
@@ -41,7 +41,11 @@ def test_se_converte_volume_de_chuva_para_float(valor, esperado):
 def test_pipelipe_de_normalizar_estacao(valor, esperado):
     assert pipeline_text(valor) == esperado
 
-@pytest.mark.parametrize("valor, esperado", [("Dados Pluviométrico da Estação Irajá", "IRAJA"), ("VIDIGAL", "VIDIGAL")])
+
+@pytest.mark.parametrize(
+    "valor, esperado",
+    [("Dados Pluviométrico da Estação Irajá", "IRAJA"), ("VIDIGAL", "VIDIGAL")],
+)
 def test_se_extrai_nome_da_estacao(valor, esperado):
     station = normalize_station_name(valor)
     assert extrair_nome_de_estacao(station) == esperado

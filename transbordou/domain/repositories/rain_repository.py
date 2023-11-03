@@ -37,7 +37,7 @@ class RainRepository:
         async with self.session as session:
             result = await session.execute(query)
             return result.scalars().all()
-        
+
     async def read_by_id(self, _id: str):
         query = select(ChuvaModel).where(ChuvaModel.id == _id)
         async with self.session as session:

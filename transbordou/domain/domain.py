@@ -19,7 +19,5 @@ class ChuvaModel(Base):
     quantidade_24_h: Mapped[float | None]
     quantidade_96_h: Mapped[float | None]
     quantidade_mes: Mapped[float | None]
-    
-    __table_args__ = (
-        UniqueConstraint('estacao', 'data', name='unique_estacao_data'),
-    )
+
+    __table_args__ = (UniqueConstraint("estacao", "data", name="unique_estacao_data"),)
