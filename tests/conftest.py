@@ -26,7 +26,7 @@ async def load_database(html_response, chuva_repository):
 
 @pytest.fixture(scope="function")
 async def session() -> AsyncEngine:
-    engine = create_async_engine("sqlite+aiosqlite:///test.db", echo=True)
+    engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=True)
     Session = async_sessionmaker(bind=engine, expire_on_commit=False)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
