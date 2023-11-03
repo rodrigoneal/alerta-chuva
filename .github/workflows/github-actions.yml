@@ -13,14 +13,14 @@ jobs:
           sudo apt install libgconf-2-4 libatk1.0-0 libatk-bridge2.0-0 libgdk-pixbuf2.0-0 libgtk-3-0 libgbm-dev libnss3-dev libxss-dev -y
           sudo apt-get install libasound2 -y
 
-      - name: Set up chromedriver
-        run: |
-          sudo apt-get update &&
-          wget "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb" -P /tmp &&
-          apt-get install -y "/tmp/google-chrome-stable_current_amd64.deb" -f
+      # - name: Set up chromedriver
+      #   run: |
+      #     sudo apt-get update &&
+      #     wget "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb" -P /tmp &&
+      #     apt-get install -y "/tmp/google-chrome-stable_current_amd64.deb" -f
 
-      # - uses: browser-actions/setup-chrome@v1
-      # - run: chrome --version
+      - uses: browser-actions/setup-chrome@v1
+      - run: chrome --version
       #----------------------------------------------
       #       check-out repo and set-up python
       #----------------------------------------------
