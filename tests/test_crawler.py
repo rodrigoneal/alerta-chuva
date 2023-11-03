@@ -53,8 +53,7 @@ async def test_se_baixa_historico_de_uma_estacao_pluviometricos(
     chuvas = await chuva_repository.read(11)
     assert len(chuvas) > 100
 
-
-@pytest.mark.skip(reason="Demora pra caralho, sem paciencia")
+@pytest.mark.skipif(site_online(), reason="Temporariamente desativado")
 async def test_se_baixa_historico_pluviometricos_todas_estacoes(
     crawler: Crawler,
     chuva_repository: RainRepository,

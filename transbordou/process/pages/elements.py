@@ -22,7 +22,6 @@ class DowloandHistory(Element):
         select = Select(element)
         select.select_by_value(str(year))
         self.find_element(self.btn_submit).click()
-        sleep(2)
 
     @wait_chrome_download(timeout=10)
     def download_history_all_stations(self, year: int):
@@ -34,4 +33,3 @@ class DowloandHistory(Element):
         select = Select(element)
         select.select_by_value(str(year))
         self.find_element(self.btn_submit).click()
-        sleep(5)
