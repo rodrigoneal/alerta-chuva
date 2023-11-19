@@ -1,3 +1,4 @@
+import base64
 import httpx
 import pytest
 from pytest_httpx import HTTPXMock
@@ -5,10 +6,6 @@ from pytest_httpx import HTTPXMock
 
 from transbordou.domain.repositories.rain_repository import RainRepository
 from transbordou.process.crawler import Crawler
-from transbordou.utils.crawler import (
-    download_rainfall_history_all_stations,
-    download_rainfall_history_one_station,
-)
 
 
 def site_online():
@@ -27,39 +24,13 @@ def crawler(chuva_repository):
     return Crawler(chuva_repository)
 
 
-async def test_se_faz_o_crawler(httpx_mock: HTTPXMock, html_response, crawler: Crawler):
-    esperado = 11
-    httpx_mock.add_response(status_code=200, html=html_response)
-    await crawler.scrape()
-    assert crawler.rains[0].estacao == esperado
+async def test_se_pega_ultimos_acumulados_de_chuva(crawler: Crawler):
+    acumulado = await crawler.get_rainfall_data()
+    esperado = max([i.station_id for i in acumulado.rain_register])
+    assert all(i.station_id for i in acumulado.rain_register)
+    assert len(acumulado.rain_register) == esperado
 
 
-@pytest.mark.slow
-async def test_se_salva_no_banco_de_dados(crawler: Crawler, chuva_repository):
-    await crawler.scrape()
-    await crawler.save()
-    assert await chuva_repository.read(11)
-
-
-@pytest.mark.skipif(site_online(), reason="Temporariamente desativado")
-async def test_se_baixa_historico_de_uma_estacao_pluviometricos(
-    chuva_repository: RainRepository, mocker
-):
-    mocker.patch("transbordou.coletar.unzip_all_file", return_value="tests/zips")
-    crawler = Crawler(chuva_repository)
-    crawler = await crawler.download_rainfall_history(
-        func=download_rainfall_history_one_station, estacao="IRAJA", year=2023
-    )
-    chuvas = await chuva_repository.read(11)
-    assert len(chuvas) > 100
-
-@pytest.mark.skipif(site_online(), reason="Temporariamente desativado")
-async def test_se_baixa_historico_pluviometricos_todas_estacoes(
-    crawler: Crawler,
-    chuva_repository: RainRepository,
-):
-    crawler = await crawler.download_rainfall_history(
-        func=download_rainfall_history_all_stations, year=1998
-    )
-    chuvas = await chuva_repository.read(11)
-    assert len(chuvas) > 100
+async def test_se_pega_as_imagens_do_radar(crawler: Crawler):
+    imgs = await crawler.get_radar_img()
+    assert len(imgs) == 20

@@ -10,37 +10,64 @@ volume_type = Annotated[float | None, BeforeValidator(parser_float)]
 
 
 class RainBase(BaseModel):
+    station_id: int
+    station_name: str
+    region: str
     data: datetime
-    quantidade_15_min: float
-    quantidade_1_h: float
-    quantidade_4_h: float
-    quantidade_24_h: float
-    quantidade_96_h: float
-    quantidade_mes: float
+    quantity_05_min: float
+    quantity_10_min: float
+    quantity_15_min: float
+    quantity_30_min: float
+    quantity_1_h: float
+    quantity_2_h: float
+    quantity_3_h: float
+    quantity_4_h: float
+    quantity_6_h: float
+    quantity_12_h: float
+    quantity_24_h: float
+    quantity_96_h: float
+    quantity_month: float
+    tx_15: float
 
 
 class RainCreate(RainBase):
-    estacao: Annotated[int, BeforeValidator(pipeline_text)]
     data: Annotated[datetime, BeforeValidator(lambda data: parser.parse(data))]
-    quantidade_15_min: volume_type
-    quantidade_1_h: volume_type
-    quantidade_4_h: volume_type
-    quantidade_24_h: volume_type
-    quantidade_96_h: volume_type
-    quantidade_mes: volume_type
+    quantity_05_min: volume_type
+    quantity_10_min: volume_type
+    quantity_15_min: volume_type
+    quantity_30_min: volume_type
+    quantity_1_h: volume_type
+    quantity_2_h: volume_type
+    quantity_3_h: volume_type
+    quantity_4_h: volume_type
+    quantity_6_h: volume_type
+    quantity_12_h: volume_type
+    quantity_24_h: volume_type
+    quantity_96_h: volume_type
+    quantity_month: volume_type
+    tx_15: volume_type
 
 
 class RainRead(RainBase):
     id: int
-    estacao: int
 
 
 class RainUpdate(BaseModel):
-    data: datetime | None = None
-    estacao: int | None = None
-    quantidade_15_min: float | None = None
-    quantidade_1_h: float | None = None
-    quantidade_4_h: float | None = None
-    quantidade_24_h: float | None = None
-    quantidade_96_h: float | None = None
-    quantidade_mes: float | None = None
+    station_id: int = None
+    station_name: str = None
+    region: str = None
+    data: datetime = None
+    quantity_05_min: float = None
+    quantity_10_min: float = None
+    quantity_15_min: float = None
+    quantity_30_min: float = None
+    quantity_1_h: float = None
+    quantity_2_h: float = None
+    quantity_3_h: float = None
+    quantity_4_h: float = None
+    quantity_6_h: float = None
+    quantity_12_h: float = None
+    quantity_24_h: float = None
+    quantity_96_h: float = None
+    quantity_month: float = None
+    tx_15: float = None

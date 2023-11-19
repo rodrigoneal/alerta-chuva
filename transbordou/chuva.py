@@ -47,7 +47,6 @@ class Chuva:
     async def choveu(self, estacao: str | int, data: str, hora: str = None) -> bool:
         if isinstance(estacao, str):
             estacao = Local[estacao].value
-
         date = self._to_datetime_or_date(data, hora)
         result = await self.rain_repository.is_raining(estacao, date)
         if result:
