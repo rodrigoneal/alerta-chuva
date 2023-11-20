@@ -20,6 +20,9 @@ selenium-tools = { git = "https://github.com/rodrigoneal/selenium-tools" }
 opencv-python = "^4.8.1.78"
 pillow = "^10.1.0"
 pytest-mock = "^3.12.0"
+joblib = "^1.3.2"
+numba = "^0.58.1"
+pytesseract = "^0.3.10"
 
 
 [tool.poetry.group.dev.dependencies]
