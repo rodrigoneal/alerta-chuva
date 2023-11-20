@@ -1,9 +1,9 @@
 from datetime import datetime
-import easyocr
 from typing import Literal
-import cv2
-import numpy as np
 
+import cv2
+import easyocr
+import numpy as np
 from dateutil.parser import parse
 
 
