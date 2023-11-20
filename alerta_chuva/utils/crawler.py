@@ -1,5 +1,5 @@
-from transbordou.locais import Local
-from transbordou.process.pages.page import GetHistory
+from alerta_chuva.locais import Local
+from alerta_chuva.process.pages.page import GetHistory
 
 
 def download_rainfall_history_one_station(driver, estacao: str, year: int) -> None:

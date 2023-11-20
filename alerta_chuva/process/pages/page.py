@@ -1,6 +1,6 @@
 from selenium_tools.page_objects import Page
 
-from transbordou.process.pages.elements import DowloandHistory
+from alerta_chuva.process.pages.elements import DowloandHistory
 
 
 class GetHistory(Page):

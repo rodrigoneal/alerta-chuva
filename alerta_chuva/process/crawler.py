@@ -2,9 +2,9 @@ import asyncio
 
 import httpx
 
-from transbordou.coletar import coletar
-from transbordou.domain.repositories.rain_repository import RainRepository
-from transbordou.process.acumulado import RainRecord
+from alerta_chuva.coletar import coletar
+from alerta_chuva.domain.repositories.rain_repository import RainRepository
+from alerta_chuva.process.acumulado import RainRecord
 
 
 class Crawler:

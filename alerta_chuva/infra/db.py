@@ -3,7 +3,7 @@ from functools import lru_cache
 
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from transbordou.domain.domain import Base
+from alerta_chuva.domain.model import Base
 
 connection_pool_size = min(32, os.cpu_count() + 4)
 

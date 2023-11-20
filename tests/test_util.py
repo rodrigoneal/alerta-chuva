@@ -1,7 +1,7 @@
 import numpy as np
 from PIL import Image
 
-from transbordou.utils.imagem import cortar_imagem
+from alerta_chuva.utils.imagem import cortar_imagem
 
 
 def test_se_corta_a_imagem_redonda_retirando_legenda():

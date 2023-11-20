@@ -1,7 +1,7 @@
 import pytest
-from transbordou.locais import Local
 
-from transbordou.utils.text import (
+from alerta_chuva.locais import Local
+from alerta_chuva.utils.text import (
     extrair_nome_de_estacao,
     normalize_station_name,
     parser_float,

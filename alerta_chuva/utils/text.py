@@ -1,7 +1,8 @@
 import re
 
-from transbordou.locais import Local
 from unidecode import unidecode
+
+from alerta_chuva.locais import Local
 
 
 def normalize_station_name(text: str) -> str:

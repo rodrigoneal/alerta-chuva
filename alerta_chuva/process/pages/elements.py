@@ -1,5 +1,3 @@
-from time import sleep
-
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from selenium_tools.page_objects import Element

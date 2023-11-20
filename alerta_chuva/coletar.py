@@ -1,11 +1,6 @@
-import re
-import zipfile
-from pathlib import Path
-
-import pandas as pd
 from bs4 import BeautifulSoup
 
-from transbordou.domain.entities.rain import RainCreate
+from alerta_chuva.domain.entities.rain import RainCreate
 
 
 def coletar(str: str):

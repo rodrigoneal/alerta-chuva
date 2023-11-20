@@ -1,11 +1,7 @@
-import base64
 import httpx
 import pytest
-from pytest_httpx import HTTPXMock
 
-
-from transbordou.domain.repositories.rain_repository import RainRepository
-from transbordou.process.crawler import Crawler
+from alerta_chuva.process.crawler import Crawler
 
 
 def site_online():

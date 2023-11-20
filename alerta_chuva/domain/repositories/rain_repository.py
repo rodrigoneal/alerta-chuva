@@ -1,11 +1,14 @@
 from datetime import date, datetime
+from typing import Any, Literal, TypeAlias
 
 from sqlalchemy import delete, func, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from transbordou.domain.domain import ChuvaModel
-from transbordou.domain.entities.rain import RainBase, RainUpdate
+from alerta_chuva.domain.entities.rain import RainBase, RainUpdate
+from alerta_chuva.domain.model import ChuvaModel
+
+type_query: TypeAlias = Literal["id", "station_id", "data", "station_name, region"]
 
 
 class RainRepository:
@@ -32,17 +35,22 @@ class RainRepository:
             except IntegrityError:
                 await session.rollback()
 
-    async def read(self, estacao: str):
-        query = select(ChuvaModel).where(ChuvaModel.estacao == estacao)
+    async def _read(self, query):
         async with self.session as session:
             result = await session.execute(query)
             return result.scalars().all()
 
-    async def read_by_id(self, _id: str):
-        query = select(ChuvaModel).where(ChuvaModel.id == _id)
-        async with self.session as session:
-            result = await session.execute(query)
-            return result.scalars().all()
+    async def read(
+        self,
+        _read: Any,
+        type_read: type_query | None = None,
+    ) -> list[ChuvaModel]:
+        if not type_read:
+            query = select(ChuvaModel)
+        else:
+            chuva_type = getattr(ChuvaModel, type_read)
+            query = select(ChuvaModel).where(chuva_type == _read)
+        return await self._read(query)
 
     async def update(self, schema: RainUpdate, _id: int):
         query = (
@@ -61,21 +69,6 @@ class RainRepository:
             model = (await session.execute(query)).scalar_one_or_none()
             return model
 
-    async def is_raining(self, estacao: str, data: date | datetime):
-        param = (
-            ChuvaModel.data
-            if isinstance(data, datetime)
-            else func.date(ChuvaModel.data)
-        )
-        query = select(ChuvaModel).where(
-            (ChuvaModel.estacao == estacao)
-            & (param == data)
-            & (ChuvaModel.quantidade_1_h > 0)
-        )
-        async with self.session as session:
-            result = await session.execute(query)
-            return result.scalars().first()
-
     async def rain_intensity(
         self, estacao: str, data: date | datetime, intensity: tuple[float]
     ):
@@ -85,9 +78,9 @@ class RainRepository:
             else func.date(ChuvaModel.data)
         )
         query = select(ChuvaModel).where(
-            (ChuvaModel.estacao == estacao)
+            (ChuvaModel.station_id == estacao)
             & (param == data)
-            & (ChuvaModel.quantidade_1_h.between(*intensity))
+            & (ChuvaModel.quantity_1_h.between(*intensity))
         )
 
         async with self.session as session:

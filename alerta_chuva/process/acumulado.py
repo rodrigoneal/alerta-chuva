@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from transbordou.domain.repositories.rain_repository import RainRepository
+from alerta_chuva.domain.repositories.rain_repository import RainRepository
 
 
 class RainRecord:

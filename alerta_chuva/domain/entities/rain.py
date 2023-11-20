@@ -4,7 +4,7 @@ from typing import Annotated
 from dateutil import parser
 from pydantic import BaseModel, BeforeValidator
 
-from transbordou.utils.text import parser_float, pipeline_text
+from alerta_chuva.utils.text import parser_float
 
 volume_type = Annotated[float | None, BeforeValidator(parser_float)]
 
