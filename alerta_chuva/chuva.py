@@ -2,7 +2,7 @@ from typing import Callable
 from alerta_chuva.domain.entities.rain import RainRead
 from alerta_chuva.domain.repositories.rain_repository import RainRepository
 from alerta_chuva.enums.locais import Local
-from alerta_chuva.parser.parser import to_datetime_or_date
+from alerta_chuva.parser.parser import str_to_datetime_or_date
 
 
 class Chuva:
@@ -26,7 +26,7 @@ class Chuva:
 
                 if await self.rain_repository.rain_intensity(
                     station,
-                    to_datetime_or_date(kwargs.get("data"), kwargs.get("hora")),
+                    str_to_datetime_or_date(kwargs.get("data"), kwargs.get("hora")),
                     getattr(self, rain_intensity),
                 ):
                     return True

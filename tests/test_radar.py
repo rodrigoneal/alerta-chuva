@@ -12,11 +12,6 @@ from alerta_chuva.services.radar.radar import Radar
 def radar():
     return Radar()
 
-def test_se_encontrar_maior_grau_de_grandeza_no_radar(radar: Radar):
-    imagem = np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
-    assert radar.encontrar_maior_grau_de_grandeza(imagem, radar.cores_e_graus) == 0
-
-
 def test_se_encontra_as_cores_e_graus(radar: Radar):
     assert radar.cores_e_graus == {
         (17, 167, 12): 1,
@@ -43,13 +38,13 @@ def test_se_encontra_as_cores_e_graus(radar: Radar):
     ],
 )
 def test_se_encontra_grandeza(radar: Radar, imagem, grau):
-    assert radar.encontrar_maior_grau_de_grandeza(imagem, radar.cores_e_graus) == grau
+    assert radar.find_rain_intensity(imagem, radar.cores_e_graus) == grau
 
 
 async def test_se_abre_imagem_em_bytes(radar: Radar):
     with open("tests/data/img/img.png", "rb") as f:
         imagem = f.read()
-    grandeza = radar.verificar_radar(imagem, "Columbia")
+    grandeza = radar.check_radar(imagem, "Columbia")
     assert grandeza == 3
 
 
@@ -61,12 +56,18 @@ async def test_se_abre_imagem_em_bytes(radar: Radar):
     ],
 )
 def test_se_encontra_grandeza_no_columbia(radar: Radar, imagem, grau):
-    grandeza = radar.verificar_radar(imagem, "Columbia")
+    grandeza = radar.check_radar(imagem, "Columbia")
     assert grandeza == grau
 
 
 def test_se_pega_a_data_da_imagem_do_radar(radar: Radar):
     esperado = datetime(2023, 11, 20, 14, 54, 57)
     imagem = cv2.imread("tests/data/img/img.png")
-    date = radar.get_img_date(imagem)
-    assert date == esperado
+    date = radar.extract_date_img_radar(imagem)
+    assert date[0] == esperado
+
+async def test_se_pega_a_ultima_imagem_do_radar(radar: Radar):
+    last = await radar.last_img_radar()
+    breakpoint()
+    assert isinstance(last[0], datetime)
+    assert isinstance(last[1], np.ndarray) 

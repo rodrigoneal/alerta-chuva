@@ -22,7 +22,7 @@ class Crawler:
             result = await client.get(url)
             return result
 
-    async def get_radar_img(self):
+    async def get_radar_img(self) -> list[httpx.Response]:
         urls = []
         for i in range(1, 20 + 1):
             if i < 10:
