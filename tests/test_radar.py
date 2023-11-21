@@ -68,6 +68,5 @@ def test_se_pega_a_data_da_imagem_do_radar(radar: Radar):
 
 async def test_se_pega_a_ultima_imagem_do_radar(radar: Radar):
     last = await radar.last_img_radar()
-    breakpoint()
     assert isinstance(last[0], datetime)
     assert isinstance(last[1], np.ndarray) 

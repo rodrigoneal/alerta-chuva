@@ -1,4 +1,5 @@
 from datetime import datetime
+import os
 from typing import Literal, TypedDict
 
 import cv2
@@ -131,8 +132,8 @@ class Radar:
         imgs = await crawler.get_radar_img()
         last_date = datetime(year=1, month=1, day=1)
         last_img = None
-
-        dates = Parallel(n_jobs=8)(
+        num_processes = round(os.cpu_count() * 0.7)
+        dates = Parallel(n_jobs=num_processes)(
             delayed(self.extract_date_img_radar)(img.content)
             for img in imgs
             if img.status_code == 200
