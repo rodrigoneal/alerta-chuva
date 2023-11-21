@@ -4,7 +4,8 @@ import httpx
 
 from alerta_chuva.coletar import coletar
 from alerta_chuva.domain.repositories.rain_repository import RainRepository
-from alerta_chuva.process.acumulado import RainRecord
+from alerta_chuva.services.acumulado import RainRecord
+
 
 
 class Crawler:

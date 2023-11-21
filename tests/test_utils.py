@@ -1,6 +1,6 @@
 import pytest
 
-from alerta_chuva.locais import Local
+from alerta_chuva.enums.locais import Local
 from alerta_chuva.utils.text import (
     extrair_nome_de_estacao,
     normalize_station_name,

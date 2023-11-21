@@ -1,10 +1,8 @@
-from datetime import date, datetime
-
-from dateutil import parser
-
+from typing import Callable
 from alerta_chuva.domain.entities.rain import RainRead
 from alerta_chuva.domain.repositories.rain_repository import RainRepository
-from alerta_chuva.locais import Local
+from alerta_chuva.enums.locais import Local
+from alerta_chuva.parser.parser import to_datetime_or_date
 
 
 class Chuva:
@@ -20,7 +18,7 @@ class Chuva:
 
     @staticmethod
     def _rain_intensity(rain_intensity: str):
-        def func(_: callable):
+        def func(_: Callable[[str | int, str, str | None], bool]):
             async def inner(self, **kwargs):
                 station = kwargs["station"].upper()
                 if isinstance(station, str):
@@ -28,7 +26,7 @@ class Chuva:
 
                 if await self.rain_repository.rain_intensity(
                     station,
-                    self._to_datetime_or_date(kwargs.get("data"), kwargs.get("hora")),
+                    to_datetime_or_date(kwargs.get("data"), kwargs.get("hora")),
                     getattr(self, rain_intensity),
                 ):
                     return True
@@ -38,15 +36,8 @@ class Chuva:
 
         return func
 
-    def _to_datetime_or_date(self, data: str, hora: str = None) -> datetime | date:
-        if hora:
-            date = parser.parse(data + " " + hora, dayfirst=True)
-        else:
-            date = parser.parse(data, dayfirst=True).date()
-        return date
-
     @_rain_intensity("chuva_detectada")
-    async def choveu(self, station: str | int, data: str, hora: str = None) -> bool:
+    async def choveu(self, *, station: str | int, data: str, hora: str = None) -> bool:
         ...  # pragma: no cover
 
     @_rain_intensity("chuva_fraca")

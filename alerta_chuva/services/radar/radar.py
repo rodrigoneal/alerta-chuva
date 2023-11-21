@@ -47,7 +47,7 @@ class Radar:
         elif regiao == "SUL":
             return ((516, 407), 50)
         elif regiao == "LESTE":
-            raise RegionNotExist(f"Região {regiao} Não existe")
+            raise RegionNotExist(f"Região {regiao} Não existe no RJ")
         elif regiao == "OESTE":
             return ((381, 370), 50)
         else:

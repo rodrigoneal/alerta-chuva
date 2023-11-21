@@ -1,4 +1,4 @@
-from alerta_chuva.locais import Local
+from alerta_chuva.enums.locais import Local
 from alerta_chuva.process.pages.page import GetHistory
 
 

@@ -2,7 +2,7 @@ import re
 
 from unidecode import unidecode
 
-from alerta_chuva.locais import Local
+from alerta_chuva.enums.locais import Local
 
 
 def normalize_station_name(text: str) -> str:

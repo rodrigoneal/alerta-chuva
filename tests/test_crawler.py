@@ -1,7 +1,8 @@
 import httpx
 import pytest
 
-from alerta_chuva.process.crawler import Crawler
+from alerta_chuva.services.crawler.crawler import Crawler
+
 
 
 def site_online():

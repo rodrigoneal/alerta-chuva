@@ -4,19 +4,13 @@ import cv2
 import numpy as np
 import pytest
 
-from alerta_chuva.process.crawler import Crawler
-from alerta_chuva.process.radar.verificar_imagem_radar import Radar
+from alerta_chuva.services.radar.radar import Radar
+
 
 
 @pytest.fixture
 def radar():
     return Radar()
-
-
-@pytest.fixture
-def crawler(chuva_repository):
-    return Crawler(chuva_repository)
-
 
 def test_se_encontrar_maior_grau_de_grandeza_no_radar(radar: Radar):
     imagem = np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
@@ -52,7 +46,7 @@ def test_se_encontra_grandeza(radar: Radar, imagem, grau):
     assert radar.encontrar_maior_grau_de_grandeza(imagem, radar.cores_e_graus) == grau
 
 
-async def test_se_abre_imagem_em_bytes(radar: Radar, crawler: Crawler):
+async def test_se_abre_imagem_em_bytes(radar: Radar):
     with open("tests/data/img/img.png", "rb") as f:
         imagem = f.read()
     grandeza = radar.verificar_radar(imagem, "Columbia")
