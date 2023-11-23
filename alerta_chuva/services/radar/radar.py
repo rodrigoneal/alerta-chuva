@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from typing import Literal, TypedDict
+from typing import Literal, TypeAlias, TypedDict
 
 import cv2
 import easyocr
@@ -13,6 +13,10 @@ from joblib import Parallel, delayed
 from alerta_chuva.parser.normalize_text import normalize_text
 from alerta_chuva.parser.parser import img_bytes_to_ndarray
 from alerta_chuva.services.crawler.crawler import Crawler
+
+RegionType: TypeAlias = Literal[
+    "Columbia", "Campo Grande", "Ilha do Governador", "Norte", "Sul", "Leste", "Oeste"
+]
 
 
 class RegionNotExist(Exception):
@@ -63,14 +67,7 @@ class Radar:
 
     def region_of_interest(
         self,
-        region: Literal[
-            "Columbia",
-            "Campo Grande",
-            "Ilha do Governador" "Norte",
-            "Sul",
-            "Leste",
-            "Oeste",
-        ],
+        region: RegionType,
     ) -> tuple[tuple[int, int], int]:
         match region:
             case "Columbia":
@@ -85,13 +82,17 @@ class Radar:
                 return ((516, 407), 50)
             case "Oeste":
                 return ((381, 370), 50)
-            case _:
+            case "Leste":
                 raise RegionNotExist(f"Region: {region} does not exist")
+            case "Rio":
+                return (490, 366, 320)
+            case _:
+                return (490, 366, 320)
 
     def check_radar(
         self,
         img_radar: str | bytes | np.ndarray,
-        radar_area: Literal["Columbia", "Norte", "Sul", "Leste", "Oeste"] | None = None,
+        radar_area: RegionType | None = None,
     ):
         img = img_radar
         if isinstance(img_radar, str):
@@ -101,9 +102,9 @@ class Radar:
         imagem = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         if imagem is None:
             return 0  # Retorna 0 se a imagem não puder ser lida
-        if radar_area:
-            ponto_central, raio = self.region_of_interest(radar_area)
-            imagem = self.select_radar_area(imagem, ponto_central, raio)
+        area = radar_area if radar_area else "Rio"
+        ponto_central, raio = self.region_of_interest(area)
+        imagem = self.select_radar_area(imagem, ponto_central, raio)
         # Encontrar o maior grau de grandeza na imagem
         maior_grau = self.find_rain_intensity(imagem, self.cores_e_graus)
         return maior_grau
@@ -166,3 +167,9 @@ class Radar:
 
         self._last_img_radar = last_img
         return last_img
+
+    async def radar(self, region: RegionType = None) -> int:
+        img = await self.last_img_radar()
+        if img is None:
+            return -1
+        return self.check_radar(img[1], region)
