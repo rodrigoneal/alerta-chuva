@@ -7,7 +7,6 @@ import pytest
 from alerta_chuva.services.radar.radar import Radar
 
 
-
 @pytest.fixture
 def radar():
     return Radar()

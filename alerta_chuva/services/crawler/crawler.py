@@ -7,7 +7,6 @@ from alerta_chuva.domain.repositories.rain_repository import RainRepository
 from alerta_chuva.services.acumulado import RainRecord
 
 
-
 class Crawler:
     def __init__(self, rain_repository: RainRepository):
         self.rain_repository = rain_repository

@@ -1,17 +1,18 @@
-from datetime import datetime
 import os
+from datetime import datetime
 from typing import Literal, TypedDict
 
 import cv2
 import easyocr
-from joblib import Parallel, delayed
 import numpy as np
 from dateutil.parser import parse
+from dateutil.parser._parser import ParserError
+from ipyleaflet import Circle, ImageOverlay, Map
+from joblib import Parallel, delayed
+
 from alerta_chuva.parser.normalize_text import normalize_text
 from alerta_chuva.parser.parser import img_bytes_to_ndarray
-
 from alerta_chuva.services.crawler.crawler import Crawler
-from dateutil.parser._parser import ParserError
 
 
 class RegionNotExist(Exception):
@@ -118,14 +119,28 @@ class Radar:
     ) -> tuple[datetime, np.ndarray]:
         if isinstance(img, bytes):
             img = img_bytes_to_ndarray(img)
-        reader = easyocr.Reader(["en"])
+        reader = easyocr.Reader(["en"], gpu=False)
         text_area = img[0:30, 0:310]
         ocr_text = reader.readtext(text_area, detail=0)
-        print(ocr_text)
         text = normalize_text(ocr_text)
-        data = parse(text)
+        try:
+            data = parse(text)
+        except ParserError:
+            breakpoint()
 
         return data, img
+    
+    def radar_map(self, img_radar: str) -> str:
+        mymap = Map(center=(-22.9499, -43.4199), zoom=8)
+        circle = Circle(location=(-22.960849, -43.2646667), radius=138900, color="blue", fill=False)
+        mymap.add_layer(circle)
+        image_overlay = ImageOverlay(url=img_radar, bounds=((-24.431567, -45.336972), (-21.478793, -41.159092)))
+        mymap.add_layer(image_overlay)
+
+
+        mymap
+        mymap.save('mapa.html')
+        return 'mapa.html'
 
     async def last_img_radar(self) -> tuple[datetime, np.ndarray]:
         crawler = Crawler(None)

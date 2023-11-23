@@ -1,4 +1,5 @@
 from typing import Callable
+
 from alerta_chuva.domain.entities.rain import RainRead
 from alerta_chuva.domain.repositories.rain_repository import RainRepository
 from alerta_chuva.enums.locais import Local

@@ -1,5 +1,6 @@
 import pytest
-from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import (AsyncEngine, async_sessionmaker,
+                                    create_async_engine)
 
 from alerta_chuva.coletar import coletar
 from alerta_chuva.domain.model import Base

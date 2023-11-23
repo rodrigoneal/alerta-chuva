@@ -1,7 +1,8 @@
 from datetime import date, datetime
+
 import cv2
-from dateutil import parser
 import numpy as np
+from dateutil import parser
 
 
 def str_to_datetime_or_date(data: str, hora: str = None) -> datetime | date:

@@ -4,7 +4,6 @@ import pytest
 from alerta_chuva.services.crawler.crawler import Crawler
 
 
-
 def site_online():
     URL = "http://alertario.rio.rj.gov.br/download/dados-pluviometricos/"
     return httpx.get(URL).status_code != 200
