@@ -5,7 +5,7 @@ from alerta_chuva.parser.parser import str_to_datetime_or_date
 P = ParamSpec("P")
 T = ParamSpec("T")
 
-Func: TypeAlias = Callable[P, T]
+Func: TypeAlias = Callable[P, T] # type: ignore
 
 
 def local_str_to_int(local: str):
@@ -21,7 +21,7 @@ def check_intensity(chuva: float, intensity: tuple[float, float]) -> bool:
 
 def insentidade_chuva(intensidade: str):
     def func(f: Func) -> Func:
-        async def inner(*args: P.args, **kwargs: P.kwargs) -> T:
+        async def inner(*args: P.args, **kwargs: P.kwargs) -> T: # type: ignore
             station = local_str_to_int(kwargs.get("station"))
             data_chuva = kwargs.get("data")
             hora_chuva = kwargs.get("hora")

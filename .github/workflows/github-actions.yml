@@ -24,10 +24,8 @@ jobs:
           virtualenvs-create: true
           virtualenvs-in-project: true
           installer-parallel: true
-
-      #----------------------------------------------
-      # install your root project, if required
-      #----------------------------------------------
+      - name: Change to parent directory
+        run: cd ..
       - name: Install project
         run: poetry install --no-interaction
       #----------------------------------------------
