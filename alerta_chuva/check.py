@@ -26,7 +26,7 @@ def insentidade_chuva(intensidade: str):
             data_chuva = kwargs.get("data")
             hora_chuva = kwargs.get("hora")
             date = str_to_datetime_or_date(data_chuva, hora_chuva)
-            self: "Chuva" = args[0]
+            self = args[0]
             chuva = (await self.get_rains(date, station))
             if chuva:
                 quantidade = chuva.quantity_24_h if not hora_chuva else chuva.quantity_15_min

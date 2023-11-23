@@ -9,7 +9,7 @@ connection_pool_size = min(32, os.cpu_count() + 4)
 
 
 class Settings:
-    asyncpg_url: str = os.getenv("SQL_URL") or "sqlite+aiosqlite:///:memory:"
+    asyncpg_url: str = os.getenv("SQL_URL") or "sqlite+aiosqlite:///rain.db"
 
 
 @lru_cache

@@ -1,3 +1,6 @@
+# Esse modulo são as entidades do acumulo de registro da chuva.
+
+
 from datetime import datetime
 from typing import Annotated
 

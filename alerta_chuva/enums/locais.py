@@ -2,6 +2,14 @@ from enum import Enum
 
 
 class LocalChuva(Enum):
+    """Locais que o o site da prefeitura do rio tem captação da chuva.
+    Eu fiz a conversão do nome do local para o valor do enum.
+    Para ajudar a compreender e pegar os locais usados no site da prefeitura do
+    Rio.
+
+    Args:
+        Enum (_type_): _description_
+    """
     VIDIGAL = 1
     URCA = 2
     ROCINHA = 3
@@ -37,6 +45,13 @@ class LocalChuva(Enum):
     MUDA = 33
 
 class LocalRadar(str, Enum):
+    """Locais que consegui identificar no radar.
+    Pode usar esses lugares para verificar se há alguma chuva captada pelo radar.
+    Enumerei para quando alguém precisar saber quais locaia já foram identificadas
+    no radar.
+
+    """
+    RIO = "Rio"
     COLUMBIA = "Columbia"
     CAMPO_GRANDE = "Campo Grande"
     ILHA_DO_GOVERNADOR = "Ilha do Governador"

@@ -9,6 +9,8 @@ from dateutil.parser import parse
 from dateutil.parser._parser import ParserError
 from ipyleaflet import Circle, ImageOverlay, Map
 from joblib import Parallel, delayed
+from alerta_chuva.commom.entities import RadarImgInfo
+from alerta_chuva.exceptions.radar_exceptions import NoRadarImagesFound
 
 from alerta_chuva.parser.normalize_text import normalize_text
 from alerta_chuva.parser.parser import img_bytes_to_ndarray
@@ -117,21 +119,19 @@ class Radar:
         y2 = min(img.shape[0], central_point[1] + radios)
         return img[y1:y2, x1:x2]
 
-    def extract_date_img_radar(
-        self, img: np.ndarray | bytes
-    ) -> tuple[datetime, np.ndarray]:
+    def _extract_date_img_radar(self, img: np.ndarray | bytes) -> RadarImgInfo:
         if isinstance(img, bytes):
             img = img_bytes_to_ndarray(img)
         reader = easyocr.Reader(["en"], gpu=False)
         text_area = img[0:30, 0:310]
         ocr_text = reader.readtext(text_area, detail=0)
         text = normalize_text(ocr_text)
+        print(text)
         try:
             data = parse(text)
         except ParserError:
-            breakpoint()
-
-        return data, img
+            return RadarImgInfo(None, None)
+        return RadarImgInfo(data, img)
 
     def radar_map(self, img_radar: str) -> str:
         mymap = Map(center=(-22.9499, -43.4199), zoom=8)
@@ -148,27 +148,27 @@ class Radar:
         mymap.save("mapa.html")
         return "mapa.html"
 
-    async def last_img_radar(self) -> tuple[datetime, np.ndarray]:
-        crawler = Crawler(None)
-        imgs = await crawler.get_radar_img()
-        last_date = datetime(year=1, month=1, day=1)
-        last_img = None
+    async def extract_date_img_radar(self, imgs: list[bytes]) -> list[RadarImgInfo]:
         num_processes = round(os.cpu_count() * 0.7)
         dates = Parallel(n_jobs=num_processes)(
-            delayed(self.extract_date_img_radar)(img.content)
-            for img in imgs
-            if img.status_code == 200
+            delayed(self._extract_date_img_radar)(img) for img in imgs
         )
-        for date in dates:
-            if date[0] > last_date:
-                last_date = date[0]
-                last_img = date
+        return dates
 
-        self._last_img_radar = last_img
-        return last_img
+    def sort_img_by_date(self, dates: list[RadarImgInfo]) -> list[RadarImgInfo]:
+        return sorted(dates, key=lambda x: x.data, reverse=True)
 
-    async def radar(self, region: RegionType = None) -> int:
-        img = await self.last_img_radar()
-        if img is None:
-            return -1
-        return self.check_radar(img[1], region)
+    async def radar(self, region: RegionType = None) -> RadarImgInfo:
+        crawler = Crawler(None)
+        imgs = await crawler.get_radar_img()
+        imgs_radar = await self.extract_date_img_radar(imgs)
+        imgs_sorted = self.sort_img_by_date(imgs_radar)
+        try:
+            img = imgs_sorted[0]
+        except IndexError:
+            raise NoRadarImagesFound(
+                "No image found. The radar website may be offline. Please wait a few minutes and try again."
+            )
+        grau = self.check_radar(img.img, region)
+        img.grau = grau
+        return img

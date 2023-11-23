@@ -1,0 +1,2 @@
+class NoRadarImagesFound(Exception):
+    pass

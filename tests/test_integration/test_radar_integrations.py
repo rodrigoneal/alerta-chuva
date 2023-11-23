@@ -6,6 +6,6 @@ def radar():
     return Radar()
 
 async def test_se_pega_dados_do_radar_e_mostra_presenca_de_chuva(radar: Radar):
-    grau = await radar.radar()
-    breakpoint()
-    assert grau > 5
+    radar_info = await radar.radar()
+    radar_info.save_img()
+    assert radar_info.grau > 5

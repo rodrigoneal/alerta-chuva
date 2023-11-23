@@ -17,13 +17,13 @@ class Crawler:
 
     async def make_request(self, url: str):
         print("Pegando dados de {} ...".format(url))
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=5) as client:
             try:
                 return await client.get(url)
             except httpx.ReadTimeout:
                 return None
 
-    async def get_radar_img(self) -> list[httpx.Response]:
+    async def get_radar_img(self) -> list[bytes]:
         tasks = []
         for i in range(1, 20 + 1):
             if i < 10:
@@ -33,7 +33,7 @@ class Crawler:
             task = asyncio.create_task(self.make_request(url))
             tasks.append(task)
         responses = await asyncio.gather(*tasks, return_exceptions=True)
-        return [response for response in responses if response and response.status_code == 200]
+        return [response.content for response in responses if response and response.status_code == 200]
 
     async def get_rainfall_data(self) -> RainRecord:
         response = await self.make_request(self.url_data_rain)
