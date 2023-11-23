@@ -85,21 +85,20 @@ class Radar:
             case "Leste":
                 raise RegionNotExist(f"Region: {region} does not exist")
             case "Rio":
-                return (490, 366, 320)
+                return ((490, 366), 320)
             case _:
-                return (490, 366, 320)
+                return ((490, 366), 320)
 
     def check_radar(
         self,
         img_radar: str | bytes | np.ndarray,
         radar_area: RegionType | None = None,
     ):
-        img = img_radar
+        imagem = img_radar
         if isinstance(img_radar, str):
-            img = cv2.imread(img_radar)
+            imagem = cv2.imread(img_radar)
         elif isinstance(img_radar, bytes):
-            img = img_bytes_to_ndarray(img_radar)
-        imagem = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            imagem = img_bytes_to_ndarray(img_radar)
         if imagem is None:
             return 0  # Retorna 0 se a imagem não puder ser lida
         area = radar_area if radar_area else "Rio"
