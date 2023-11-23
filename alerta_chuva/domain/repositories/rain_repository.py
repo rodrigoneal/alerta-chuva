@@ -52,6 +52,21 @@ class RainRepository:
             query = select(ChuvaModel).where(chuva_type == _read)
         return await self._read(query)
 
+    async def read_rain_by_date(
+        self, data: date | datetime, station_id: int
+    ) -> list[ChuvaModel]:
+        param = (
+            ChuvaModel.data
+            if isinstance(data, datetime)
+            else func.date(ChuvaModel.data)
+        )
+        query = select(ChuvaModel).where(
+            (param == data) & (ChuvaModel.station_id == station_id)
+        ).order_by(ChuvaModel.data)
+        async with self.session as session:
+            result = await session.execute(query)
+            return result.scalars().one()
+
     async def update(self, schema: RainUpdate, _id: int):
         query = (
             update(ChuvaModel)
@@ -68,21 +83,3 @@ class RainRepository:
         async with self.session as session:
             model = (await session.execute(query)).scalar_one_or_none()
             return model
-
-    async def rain_intensity(
-        self, estacao: str, data: date | datetime, intensity: tuple[float]
-    ):
-        param = (
-            ChuvaModel.data
-            if isinstance(data, datetime)
-            else func.date(ChuvaModel.data)
-        )
-        query = select(ChuvaModel).where(
-            (ChuvaModel.station_id == estacao)
-            & (param == data)
-            & (ChuvaModel.quantity_1_h.between(*intensity))
-        )
-
-        async with self.session as session:
-            result = await session.execute(query)
-            return result.scalars().first()

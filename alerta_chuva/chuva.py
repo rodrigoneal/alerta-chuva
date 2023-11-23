@@ -1,8 +1,11 @@
+from datetime import date, datetime
+from functools import cache
 from typing import Callable
+from alerta_chuva.check import insentidade_chuva
 
 from alerta_chuva.domain.entities.rain import RainRead
 from alerta_chuva.domain.repositories.rain_repository import RainRepository
-from alerta_chuva.enums.locais import Local
+from alerta_chuva.enums.locais import LocalChuva
 from alerta_chuva.parser.parser import str_to_datetime_or_date
 
 
@@ -16,51 +19,36 @@ class Chuva:
     def __init__(self, rain_repository: RainRepository):
         self._chuva: list[RainRead] = None
         self.rain_repository = rain_repository
+        
+    
+    @cache
+    async def get_rains(self, date:datetime | date, station_id: int) -> list[RainRead]:
+        return await self.rain_repository.read_rain_by_date(date, station_id)
 
-    @staticmethod
-    def _rain_intensity(rain_intensity: str):
-        def func(_: Callable[[str | int, str, str | None], bool]):
-            async def inner(self, **kwargs):
-                station = kwargs["station"].upper()
-                if isinstance(station, str):
-                    station = Local[station].value
-
-                if await self.rain_repository.rain_intensity(
-                    station,
-                    str_to_datetime_or_date(kwargs.get("data"), kwargs.get("hora")),
-                    getattr(self, rain_intensity),
-                ):
-                    return True
-                return False
-
-            return inner
-
-        return func
-
-    @_rain_intensity("chuva_detectada")
-    async def choveu(self, *, station: str | int, data: str, hora: str = None) -> bool:
+    
+    @insentidade_chuva(intensidade=chuva_detectada)
+    async def chuva_detectada(
+        self, *, station: str | int, data: str = None, hora: str = None
+    ) -> bool:
         ...  # pragma: no cover
-
-    @_rain_intensity("chuva_fraca")
+        
+    @insentidade_chuva(intensidade=chuva_fraca)
     async def choveu_fraca(
-        self, *, station: str | int, data: str, hora: str = None
+        self, *, station: str | int, data: str = None, hora: str = None
     ) -> bool:
         ...  # pragma: no cover
-
-    @_rain_intensity("chuva_moderada")
+    @insentidade_chuva(intensidade=chuva_moderada)
     async def choveu_moderado(
-        self, *, station: str | int, data: str, hora: str = None
+        self, *, station: str | int, data: str = None, hora: str = None
     ) -> bool:
         ...  # pragma: no cover
-
-    @_rain_intensity("chuva_forte")
+    @insentidade_chuva(intensidade=chuva_forte)
     async def choveu_forte(
-        self, *, station: str | int, data: str, hora: str = None
+        self, *, station: str | int, data: str = None, hora: str = None
     ) -> bool:
         ...  # pragma: no cover
-
-    @_rain_intensity("chuva_muito_forte")
+    @insentidade_chuva(intensidade=chuva_muito_forte)
     async def choveu_muito_forte(
-        self, *, station: str | int, data: str, hora: str = None
+        self, *, station: str | int, data: str = None, hora: str = None
     ) -> bool:
         ...  # pragma: no cover

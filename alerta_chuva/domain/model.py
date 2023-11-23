@@ -33,3 +33,16 @@ class ChuvaModel(Base):
     __table_args__ = (
         UniqueConstraint("station_name", "data", name="unique_station_data"),
     )
+
+
+
+    def __repr__(self) -> str:
+        attributos = []
+        ignore = ["metadata", "registry"]
+        for attr in dir(self):
+            if not attr.startswith("_") and not attr in ignore:
+                value = getattr(self, attr)
+                attributos.append(f"{attr}: {value!r}")
+
+
+        return f"ChuvaModel({', '.join(attributos)})"

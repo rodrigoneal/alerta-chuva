@@ -10,7 +10,3 @@ def normalize_text(texts: list[str]) -> str:
         texts[3] = hora
     normalized = [text.replace(" ", "").replace(".", ":") for text in texts]
     return " ".join(normalized)
-
-
-# coordenadas -22.540160428788496, -43.469578752119155
-# 455 271

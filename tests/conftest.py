@@ -26,10 +26,10 @@ def html_response():
                    <td id="bacia-1" class=" location">Zona Sul</td>
                    <td id="horaLeitura-1" class=" text-center leitura"><a id="data-1" href="/estacoes/pluviometricos/24horas/1/" title="Dados das últimas 24 horas">20/11/2023 - 13:50:00</a></td>
 
-                   <td id="m05-1" class=" text-center m05">0,0</td>
-                   <td id="m10-1" class=" text-center m10">0,0</td>
-                   <td id="m15-1" class=" text-center m15">0,0</td>
-                   <td id="m30-1" class=" text-center m30">0,0</td>
+                   <td id="m05-1" class=" text-center m05">0,8</td>
+                   <td id="m10-1" class=" text-center m10">1,5</td>
+                   <td id="m15-1" class=" text-center m15">2,0</td>
+                   <td id="m30-1" class=" text-center m30">2,0</td>
                    <td id="h01-1" class=" text-center h01">2,8</td>
                    <td id="h02-1" class=" text-center h02">0,0</td>
                    <td id="h03-1" class=" text-center h03">0,0</td>
@@ -54,7 +54,7 @@ async def load_database(html_response, chuva_repository):
 
 @pytest.fixture(scope="function")
 async def session() -> AsyncEngine:
-    engine = create_async_engine("sqlite+aiosqlite:///test.db")
+    engine = create_async_engine("sqlite+aiosqlite:///:memory:")
     Session = async_sessionmaker(bind=engine, expire_on_commit=False)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

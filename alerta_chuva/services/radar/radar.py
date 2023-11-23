@@ -42,15 +42,6 @@ class Radar:
     def find_rain_intensity(
         self, img: np.ndarray, cores_e_graus: dict[tuple[int, int, int], int]
     ) -> int:
-        """
-
-        Args:
-            img (np.ndarray): _description_
-            cores_e_graus (dict[tuple[int, int, int], int]): _description_
-
-        Returns:
-            int: _description_
-        """
         try:
             imagem = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         except Exception as exc:
@@ -71,11 +62,23 @@ class Radar:
         return maior_grau
 
     def region_of_interest(
-        self, region: Literal["Columbia", "Norte", "Sul", "Leste", "Oeste"]
+        self,
+        region: Literal[
+            "Columbia",
+            "Campo Grande",
+            "Ilha do Governador" "Norte",
+            "Sul",
+            "Leste",
+            "Oeste",
+        ],
     ) -> tuple[tuple[int, int], int]:
         match region:
             case "Columbia":
                 return ((491, 346), 20)
+            case "Campo Grande":
+                return ((429, 366), 30)
+            case "Ilha do Governador":
+                return ((527, 341), 50)
             case "Norte":
                 return ((480, 356), 50)
             case "Sul":
@@ -129,18 +132,21 @@ class Radar:
             breakpoint()
 
         return data, img
-    
+
     def radar_map(self, img_radar: str) -> str:
         mymap = Map(center=(-22.9499, -43.4199), zoom=8)
-        circle = Circle(location=(-22.960849, -43.2646667), radius=138900, color="blue", fill=False)
+        circle = Circle(
+            location=(-22.960849, -43.2646667), radius=138900, color="blue", fill=False
+        )
         mymap.add_layer(circle)
-        image_overlay = ImageOverlay(url=img_radar, bounds=((-24.431567, -45.336972), (-21.478793, -41.159092)))
+        image_overlay = ImageOverlay(
+            url=img_radar, bounds=((-24.431567, -45.336972), (-21.478793, -41.159092))
+        )
         mymap.add_layer(image_overlay)
 
-
         mymap
-        mymap.save('mapa.html')
-        return 'mapa.html'
+        mymap.save("mapa.html")
+        return "mapa.html"
 
     async def last_img_radar(self) -> tuple[datetime, np.ndarray]:
         crawler = Crawler(None)

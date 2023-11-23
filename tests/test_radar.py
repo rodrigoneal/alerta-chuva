@@ -11,6 +11,7 @@ from alerta_chuva.services.radar.radar import Radar
 def radar():
     return Radar()
 
+
 def test_se_encontra_as_cores_e_graus(radar: Radar):
     assert radar.cores_e_graus == {
         (17, 167, 12): 1,
@@ -21,6 +22,11 @@ def test_se_encontra_as_cores_e_graus(radar: Radar):
         (227, 6, 5): 6,
         (197, 0, 197): 7,
     }
+
+
+@pytest.fixture
+def imagem_radar():
+    return cv2.imread("tests/data/img/radar.png")
 
 
 @pytest.mark.parametrize(
@@ -65,7 +71,23 @@ def test_se_pega_a_data_da_imagem_do_radar(radar: Radar):
     date = radar.extract_date_img_radar(imagem)
     assert date[0] == esperado
 
+
 async def test_se_pega_a_ultima_imagem_do_radar(radar: Radar):
     last = await radar.last_img_radar()
     assert isinstance(last[0], datetime)
-    assert isinstance(last[1], np.ndarray) 
+    assert isinstance(last[1], np.ndarray)
+
+
+def test_se_encontra_chuva_na_ilha(radar: Radar, imagem_radar: np.ndarray):
+    grandeza = radar.check_radar(imagem_radar, "Ilha do Governador")
+    assert grandeza == 3
+
+
+def test_se_encontra_chuva_no_campo_grande(radar: Radar, imagem_radar: np.ndarray):
+    grandeza = radar.check_radar(imagem_radar, "Campo Grande")
+    assert grandeza == 0
+
+
+def test_se_encontra_chuva_no_columbia(radar: Radar, imagem_radar: np.ndarray):
+    grandeza = radar.check_radar(imagem_radar, "Columbia")
+    assert grandeza == 0

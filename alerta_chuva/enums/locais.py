@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class Local(Enum):
+class LocalChuva(Enum):
     VIDIGAL = 1
     URCA = 2
     ROCINHA = 3
@@ -35,3 +35,12 @@ class Local(Enum):
     LARANJEIRAS = 31
     SAO_CRISTOVAO = 32
     MUDA = 33
+
+class LocalRadar(str, Enum):
+    COLUMBIA = "Columbia"
+    CAMPO_GRANDE = "Campo Grande"
+    ILHA_DO_GOVERNADOR = "Ilha do Governador"
+    NORTE = "Norte"
+    SUL = "Sul"
+    LESTE = "Leste"
+    OESTE = "Oeste"
