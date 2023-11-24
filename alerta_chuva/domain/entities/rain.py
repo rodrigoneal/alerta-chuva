@@ -13,6 +13,12 @@ volume_type = Annotated[float | None, BeforeValidator(parser_float)]
 
 
 class RainBase(BaseModel):
+    """Base que cria um modelo para o acumulo de chuva.
+
+    Args:
+        BaseModel (BaseModel): Classe base do Pydantic
+    """
+
     station_id: int
     station_name: str
     region: str
@@ -34,6 +40,40 @@ class RainBase(BaseModel):
 
 
 class RainCreate(RainBase):
+    """Modelo para criar um acumulo de chuva.
+
+    Esse modelo será usado para criar um novo acumulo de chuva.
+
+    Exemplo de uso:
+
+    ```python
+    from alerta_chuva.domain.entities.rain import RainCreate
+
+    rain = RainCreate(
+        station_id=1,
+        station_name="Rio de Janeiro",
+        region="RJ",
+        data=datetime.now(),
+        quantity_05_min=0.0,
+        quantity_10_min=0.0,
+        quantity_15_min=0.0,
+        quantity_30_min=0.0,
+        quantity_1_h=0.0,
+        quantity_2_h=0.0,
+        quantity_3_h=0.0,
+        quantity_4_h=0.0,
+        quantity_6_h=0.0,
+        quantity_12_h=0.0,
+        quantity_24_h=0.0,
+        quantity_96_h=0.0,
+        quantity_month=0.0,
+        tx_15=0.0    )
+    ```
+
+    Args:
+        RainBase (BaseModel): Base do acumulo de chuva
+    """
+
     data: Annotated[datetime, BeforeValidator(lambda data: parser.parse(data))]
     quantity_05_min: volume_type
     quantity_10_min: volume_type
@@ -52,10 +92,50 @@ class RainCreate(RainBase):
 
 
 class RainRead(RainBase):
+    """Modelo para ler um acumulo de chuva.
+
+    Esse modelo será usado para ler um acumulo de chuva.
+    Args:
+        RainBase (BaseModel): _description_
+    """
+
     id: int
 
 
 class RainUpdate(BaseModel):
+    """Modelo para atualizar um acumulo de chuva.
+
+    Esse modelo será usado para atualizar um acumulo de chuva.
+    Exemplo de uso:
+
+    ```python
+    from alerta_chuva.domain.entities.rain import RainUpdate
+
+    rain = RainUpdate(
+        station_id=1,
+        station_name="Rio de Janeiro",
+        region="RJ",
+        data=datetime.now(),
+        quantity_05_min=0.0,
+        quantity_10_min=0.0,
+        quantity_15_min=0.0,
+        quantity_30_min=0.0,
+        quantity_1_h=0.0,
+        quantity_2_h=0.0,
+        quantity_3_h=0.0,
+        quantity_4_h=0.0,
+        quantity_6_h=0.0,
+        quantity_12_h=0.0,
+        quantity_24_h=0.0,
+        quantity_96_h=0.0,
+        quantity_month=0.0,
+        tx_15=0.0    )
+    ```
+
+    Args:
+        BaseModel (BaseModel): Classe base do Pydantic
+    """
+
     station_id: int = None
     station_name: str = None
     region: str = None

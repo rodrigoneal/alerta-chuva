@@ -1,3 +1,5 @@
+# Modulo de domínio.
+
 from datetime import datetime
 
 from sqlalchemy import UniqueConstraint
@@ -5,10 +7,27 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 class Base(DeclarativeBase):
+    """
+    Classe base para criar tabelas.
+
+    Args:
+        DeclarativeBase (DeclarativeBase): Classe base do SQLAlchemy
+    """
+
     pass
 
 
 class ChuvaModel(Base):
+    """
+    Tabela de chuvas.
+
+    Args:
+        Base (DeclarativeBase): Classe base do SQLAlchemy
+
+    Returns:
+       ChuvaModel : ChuvaModel
+    """
+
     __tablename__ = "chuvas"
     id: Mapped[int] = mapped_column(primary_key=True)
     station_id: Mapped[int]
@@ -35,6 +54,13 @@ class ChuvaModel(Base):
     )
 
     def __repr__(self) -> str:
+        """Representacão do objeto.
+
+
+        Returns:
+            str: representação do objeto com os atributos.
+        """
+
         attributos = []
         ignore = ["metadata", "registry"]
         for attr in dir(self):

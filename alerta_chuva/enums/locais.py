@@ -1,3 +1,5 @@
+# Modulo com os enums para o site da prefeitura do Rio.
+
 from enum import Enum
 
 
@@ -51,7 +53,6 @@ class LocalRadar(str, Enum):
     Pode usar esses lugares para verificar se há alguma chuva captada pelo radar.
     Enumerei para quando alguém precisar saber quais locaia já foram identificadas
     no radar.
-
     """
 
     RIO = "Rio"

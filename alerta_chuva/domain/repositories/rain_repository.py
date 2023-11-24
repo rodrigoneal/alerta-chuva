@@ -1,21 +1,37 @@
+# Modulo para criar repositorio de chuva.
+
 from datetime import date, datetime
-from typing import Any, Literal, TypeAlias
+from typing import Any
 
 from sqlalchemy import delete, func, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from alerta_chuva.domain.entities.rain import RainBase, RainUpdate
+from alerta_chuva.commom.types import TypeQuery
+from alerta_chuva.domain.entities.rain import RainCreate, RainUpdate
 from alerta_chuva.domain.model import ChuvaModel
-
-type_query: TypeAlias = Literal["id", "station_id", "data", "station_name, region"]
 
 
 class RainRepository:
-    def __init__(self, session: AsyncEngine):
-        self.session = session
+    """
+    Repositorio de chuva.
+    Para interacão com o banco de dados.
+    """
 
-    async def create(self, schema: RainBase):
+    def __init__(self, session: AsyncEngine):
+        self.session = session  # session do sqlalchemy
+
+    async def create(self, schema: RainCreate):
+        """
+        Armazena um novo acumulo de chuva no banco de dados.
+
+        Args:
+            schema (RainCreate): Modelo para criar um novo acumulo de chuva.
+
+        Returns:
+            ChuvaModel: acumulo de chuva criado.
+        """
+
         model = ChuvaModel(**schema.model_dump())
         async with self.session as session:
             session.add(model)
@@ -26,16 +42,16 @@ class RainRepository:
             except IntegrityError:
                 await session.rollback()
 
-    async def create_many(self, schema: list[RainBase]):
-        models = [ChuvaModel(**model.model_dump()) for model in schema]
-        async with self.session as session:
-            session.add_all(models)
-            try:
-                await session.commit()
-            except IntegrityError:
-                await session.rollback()
+    async def _read(self, query) -> list[ChuvaModel]:
+        """
+        Executa uma consulta no banco de dados.
 
-    async def _read(self, query):
+        Args:
+            query (Any): Consulta a ser executada.
+
+        Returns:
+            list[ChuvaModel]: Acumulo de chuvas.
+        """
         async with self.session as session:
             result = await session.execute(query)
             return result.scalars().all()
@@ -43,8 +59,29 @@ class RainRepository:
     async def read(
         self,
         _read: Any,
-        type_read: type_query | None = None,
+        type_read: TypeQuery | None = None,
     ) -> list[ChuvaModel]:
+        """
+        Busca um acumulo de chuva no banco de dados.
+        Se nenhum argumento for passado, retorna todos os acumulos de chuva.
+        Exemplos de uso:
+
+        ```python
+        chuva = await RainRepository.read(1)
+        chuva = await RainRepository.read(1, "id")
+        chuva = await RainRepository.read(1, "station_id")
+        chuva = await RainRepository.read("2022-01-01", "data")
+        chuva = await RainRepository.read("Vidigal", "station_name")
+        ```
+
+        Args:
+            _read (Any): Valor que será pesquisado.
+            type_read (TypeQuery | None, optional): Tipo de pesquisa. Defaults to None.
+
+        Returns:
+            list[ChuvaModel]: Acumulo de chuvas.
+        """
+
         if not type_read:
             query = select(ChuvaModel)
         else:
@@ -54,7 +91,19 @@ class RainRepository:
 
     async def read_rain_by_date(
         self, data: date | datetime, station_id: int
-    ) -> list[ChuvaModel]:
+    ) -> ChuvaModel:
+        """
+        Busca um acumulo de chuva no banco de dados pela data.
+        Pode ser pesquisado por date ou datetime do python.
+
+        Args:
+            data (date | datetime): Data que será pesquisada.
+            station_id (int): ID da estação que será pesquisada.
+
+        Returns:
+            ChuvaModel: Acumulo de chuvas.
+        """
+
         param = (
             ChuvaModel.data
             if isinstance(data, datetime)
@@ -69,7 +118,17 @@ class RainRepository:
             result = await session.execute(query)
             return result.scalars().one()
 
-    async def update(self, schema: RainUpdate, _id: int):
+    async def update(self, schema: RainUpdate, _id: int) -> ChuvaModel:
+        """Atualiza um acumulo de chuva no banco de dados.
+
+        Args:
+            schema (RainUpdate): Modelo para atualizar um acumulo de chuva.
+            _id (int): ID do acumulo de chuva que será atualizado.
+
+        Returns:
+            ChuvaModel: Acumulo de chuva atualizado.
+        """
+
         query = (
             update(ChuvaModel)
             .where(ChuvaModel.id == _id)
@@ -80,7 +139,16 @@ class RainRepository:
             model = (await session.execute(query)).scalar_one_or_none()
             return model
 
-    async def delete(self, _id: int):
+    async def delete(self, _id: int) -> ChuvaModel:
+        """Deleta um acumulo de chuva no banco de dados.
+
+        Args:
+            _id (int): ID do acumulo de chuva que será deletado.
+
+        Returns:
+            ChuvaModel: Acumulo de chuva deletado.
+        """
+
         query = delete(ChuvaModel).where(ChuvaModel.id == _id).returning(ChuvaModel)
         async with self.session as session:
             model = (await session.execute(query)).scalar_one_or_none()

@@ -1,9 +1,9 @@
 import pytest
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine
 
-from alerta_chuva.coletar import coletar
 from alerta_chuva.domain.model import Base
 from alerta_chuva.domain.repositories.rain_repository import RainRepository
+from alerta_chuva.services.crawler.crawler import Crawler
 
 # @pytest.fixture(scope="module")
 # def event_loop():
@@ -46,8 +46,13 @@ def html_response():
 
 
 @pytest.fixture
-async def load_database(html_response, chuva_repository):
-    dados = coletar(html_response)
+def crawler(chuva_repository):
+    return Crawler(chuva_repository)
+
+
+@pytest.fixture
+async def load_database(html_response, chuva_repository, crawler: Crawler):
+    dados = crawler.extract_info_rain(html_response)
     [await chuva_repository.create(dado) for dado in dados]
 
 

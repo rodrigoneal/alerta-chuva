@@ -1,6 +1,6 @@
 import pytest
 
-from alerta_chuva.chuva import Chuva
+from alerta_chuva.services.acumulado.chuva import Chuva
 
 
 @pytest.fixture
