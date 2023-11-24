@@ -1,5 +1,7 @@
 # Alerta de Chuva
 
+[![codecov](https://codecov.io/gh/rodrigoneal/alerta-chuva/graph/badge.svg?token=FQY0AP0SXM)](https://codecov.io/gh/rodrigoneal/alerta-chuva)
+
 ## Introdução
 Este projeto surge da necessidade crucial, uma vez que resido próximo ao rio Acari, que tem sido negligenciado pelas autoridades públicas ao longo dos anos. Com os impactos do aquecimento global e o fenômeno El Niño, a previsão é de um aumento nas chuvas. Portanto, o objetivo do alerta de chuva é notificar sobre registros de chuvas na cabeceira do rio Acari ou a proximidade de nuvens em minha região ou na cabeceira.
 
