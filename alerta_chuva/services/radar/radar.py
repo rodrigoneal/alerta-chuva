@@ -106,7 +106,6 @@ class Radar:
         area = radar_area if radar_area else "Rio"
         ponto_central, raio = self.region_of_interest(area)
         imagem = self.select_radar_area(imagem, ponto_central, raio)
-        # Encontrar o maior grau de grandeza na imagem
         maior_grau = self.find_rain_intensity(imagem, self.cores_e_graus)
         return maior_grau
 
