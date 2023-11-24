@@ -12,6 +12,7 @@ def str_to_datetime_or_date(data: str, hora: str = None) -> datetime | date:
         date = parser.parse(data, dayfirst=True).date()
     return date
 
+
 def img_bytes_to_ndarray(img_bytes: bytes) -> np.ndarray:
     nparr = np.frombuffer(img_bytes, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)

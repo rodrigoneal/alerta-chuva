@@ -4,4 +4,3 @@ def parser_float(text: str) -> float:
     if text == "ND" or not text:
         return None
     return float(text.strip().replace(",", "."))
-

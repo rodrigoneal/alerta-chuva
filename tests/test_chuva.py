@@ -15,7 +15,9 @@ async def test_se_pega_chuva_pela_data(chuva: Chuva, load_database):
 
 async def test_se_pega_chuva_pela_data_hora(chuva: Chuva, load_database):
     assert (
-        await chuva.chuva_detectada(station="Vidigal", data="20/11/2023", hora="13:50:00")
+        await chuva.chuva_detectada(
+            station="Vidigal", data="20/11/2023", hora="13:50:00"
+        )
         is True
     )
 

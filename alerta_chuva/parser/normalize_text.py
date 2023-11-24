@@ -1,5 +1,4 @@
 def normalize_text(texts: list[str]) -> str:
-
     if len(texts) == 6:
         texts[3] = ":".join(texts[3:4])
         del texts[4]

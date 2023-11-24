@@ -10,6 +10,7 @@ class LocalChuva(Enum):
     Args:
         Enum (_type_): _description_
     """
+
     VIDIGAL = 1
     URCA = 2
     ROCINHA = 3
@@ -44,6 +45,7 @@ class LocalChuva(Enum):
     SAO_CRISTOVAO = 32
     MUDA = 33
 
+
 class LocalRadar(str, Enum):
     """Locais que consegui identificar no radar.
     Pode usar esses lugares para verificar se há alguma chuva captada pelo radar.
@@ -51,6 +53,7 @@ class LocalRadar(str, Enum):
     no radar.
 
     """
+
     RIO = "Rio"
     COLUMBIA = "Columbia"
     CAMPO_GRANDE = "Campo Grande"

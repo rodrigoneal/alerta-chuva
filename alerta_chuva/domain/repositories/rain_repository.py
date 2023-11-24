@@ -60,9 +60,11 @@ class RainRepository:
             if isinstance(data, datetime)
             else func.date(ChuvaModel.data)
         )
-        query = select(ChuvaModel).where(
-            (param == data) & (ChuvaModel.station_id == station_id)
-        ).order_by(ChuvaModel.data)
+        query = (
+            select(ChuvaModel)
+            .where((param == data) & (ChuvaModel.station_id == station_id))
+            .order_by(ChuvaModel.data)
+        )
         async with self.session as session:
             result = await session.execute(query)
             return result.scalars().one()

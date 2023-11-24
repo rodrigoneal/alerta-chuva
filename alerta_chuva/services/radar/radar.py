@@ -1,5 +1,4 @@
 import os
-from datetime import datetime
 from typing import Literal, TypeAlias, TypedDict
 
 import cv2
@@ -9,9 +8,9 @@ from dateutil.parser import parse
 from dateutil.parser._parser import ParserError
 from ipyleaflet import Circle, ImageOverlay, Map
 from joblib import Parallel, delayed
+
 from alerta_chuva.commom.entities import RadarImgInfo
 from alerta_chuva.exceptions.radar_exceptions import NoRadarImagesFound
-
 from alerta_chuva.parser.normalize_text import normalize_text
 from alerta_chuva.parser.parser import img_bytes_to_ndarray
 from alerta_chuva.services.crawler.crawler import Crawler
@@ -50,7 +49,7 @@ class Radar:
     ) -> int:
         try:
             imagem = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        except Exception as exc:
+        except Exception:
             imagem = img
             pass
 

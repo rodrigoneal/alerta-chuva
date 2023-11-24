@@ -1,9 +1,13 @@
 import pytest
 
 from alerta_chuva.enums.locais import Local
-from alerta_chuva.utils.text import (extrair_nome_de_estacao,
-                                     normalize_station_name, parser_float,
-                                     pipeline_text, station_to_int)
+from alerta_chuva.utils.text import (
+    extrair_nome_de_estacao,
+    normalize_station_name,
+    parser_float,
+    pipeline_text,
+    station_to_int,
+)
 
 
 def estacao_nome():

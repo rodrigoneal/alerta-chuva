@@ -33,7 +33,11 @@ class Crawler:
             task = asyncio.create_task(self.make_request(url))
             tasks.append(task)
         responses = await asyncio.gather(*tasks, return_exceptions=True)
-        return [response.content for response in responses if response and response.status_code == 200]
+        return [
+            response.content
+            for response in responses
+            if response and response.status_code == 200
+        ]
 
     async def get_rainfall_data(self) -> RainRecord:
         response = await self.make_request(self.url_data_rain)
