@@ -1,21 +1,22 @@
-from functools import cache
 import os
-from typing import Sequence
+from typing import ClassVar, Iterable, Optional
 
 import cv2
-import easyocr
+import easyocr  # type: ignore
 import numpy as np
-from dateutil.parser import parse
-from dateutil.parser._parser import ParserError
-from ipyleaflet import Circle, ImageOverlay, Map
-from joblib import Parallel, delayed
+from dateutil.parser import parse  # type: ignore
+from dateutil.parser._parser import ParserError  # type: ignore
+from ipyleaflet import Circle, ImageOverlay, Map  # type: ignore
+from joblib import Parallel, delayed  # type: ignore
 
 from alerta_chuva.commom.aux import RadarImgInfo
-from alerta_chuva.commom.types import RegionRadar, RegionType
+from alerta_chuva.commom.types import ColorAndGrade, RegionRadar, RegionType
 from alerta_chuva.exceptions.radar_exceptions import NoRadarImagesFound, RegionNotExist
 from alerta_chuva.parser.normalize_text import normalize_text
 from alerta_chuva.parser.parser import img_bytes_to_ndarray
 from alerta_chuva.services.crawler.crawler import Crawler
+
+num_cpus = os.cpu_count()
 
 
 class Radar:
@@ -24,9 +25,14 @@ class Radar:
     Raises:
         RegionNotExist: Exceção caso nao consiga encontrar a regiao.
         NoRadarImagesFound: Exceção caso não consiga encontrar as imagens do radar.
+
+    args:
+        num_processors (int): Quantidade de processadores que serão usados. default: round(os.cpu_count() / 2), Metade de cores do processador.
+        cores_e_graus (dict[tuple[int, int, int], int]): Dicionário com as cores e graus. default: {(17, 167, 12): 1, (19, 122, 19): 2, (4, 85, 4): 3, (195, 230, 0): 4, (255, 112, 0): 5, (227, 6, 5): 6, (197, 0, 197): 7}.
     """
 
-    cores_e_graus = {
+    num_processors: ClassVar[int] = round(num_cpus / 2) if num_cpus else 1
+    cores_e_graus: ClassVar[ColorAndGrade] = {
         (17, 167, 12): 1,  # Verde Claro (grau 1)
         (19, 122, 19): 2,  # Verde Médio (grau 2)
         (4, 85, 4): 3,  # Verde Escuro (grau 3)
@@ -138,10 +144,12 @@ class Radar:
             imagem = img_bytes_to_ndarray(img_radar)
         if imagem is None:
             raise NoRadarImagesFound("No radar images found")
+        if not isinstance(imagem, np.ndarray):
+            raise NoRadarImagesFound("No radar images found")
         area = radar_area if radar_area else "Rio"
         ponto_central, raio = self.region_of_interest(area)
-        imagem = self.select_radar_area(imagem, ponto_central, raio)
-        maior_grau = self.find_rain_intensity(imagem, self.cores_e_graus)
+        img_area = self.select_radar_area(imagem, ponto_central, raio)
+        maior_grau = self.find_rain_intensity(img_area, self.cores_e_graus)
         return maior_grau
 
     def select_radar_area(
@@ -216,7 +224,7 @@ class Radar:
         mymap.save("mapa.html")
         return "mapa.html"
 
-    def extract_date_img_radar(self, imgs: Sequence[bytes]) -> list[RadarImgInfo]:
+    def extract_date_img_radar(self, imgs: Iterable[bytes]) -> list[RadarImgInfo]:
         """
         Extrai a data e a hora da imagem do radar.
         Faz basicamente o que o metodo _extract_date_img_radar faz, só que paraliza o processo para extrair as datas e horas das imagens do radar.
@@ -231,8 +239,7 @@ class Radar:
         Returns:
             list[RadarImgInfo]: Informações das imagens do radar.
         """
-        num_processes = round(os.cpu_count() / 2)
-        dates = Parallel(n_jobs=num_processes)(
+        dates = Parallel(n_jobs=self.num_processors)(
             delayed(self._extract_date_img_radar)(img) for img in imgs
         )
         return dates
@@ -247,9 +254,9 @@ class Radar:
         Returns:
             list[RadarImgInfo]: Informações das imagens do radar.
         """
-        return sorted(dates, key=lambda x: x.data, reverse=True)
+        return sorted(dates, key=lambda x: x.data, reverse=True)  # type: ignore
 
-    async def radar(self, region: RegionType = None) -> RadarImgInfo:
+    async def radar(self, region: Optional[RegionType] = None) -> RadarImgInfo:
         """Baixa as 20 imagens do radar, extrai a data e a hora da imagem e ordena as imagens pelo valor da data e pega a intensidade da nuvem da imagem.
         É o motodo principal.
 
@@ -264,7 +271,7 @@ class Radar:
         Returns:
             RadarImgInfo: Informações da imagem do radar.
         """
-        crawler = Crawler(None)
+        crawler = Crawler()
         imgs = await crawler.get_radar_img()
         imgs_radar = self.extract_date_img_radar(imgs)
         imgs_sorted = self.sort_img_by_date(imgs_radar)
@@ -274,6 +281,7 @@ class Radar:
             raise NoRadarImagesFound(
                 "No image found. The radar website may be offline. Please wait a few minutes and try again."
             )
+        assert isinstance(img.img, np.ndarray)
         grau = self.check_radar(img.img, region)
         img.grau = grau
         return img

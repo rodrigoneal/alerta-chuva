@@ -35,11 +35,11 @@ class RainRecord:
 
 @dataclass
 class RadarImgInfo:
-    data: datetime
-    img: np.ndarray
+    data: datetime | None
+    img: np.ndarray | None
     grau: int = 0
 
-    def save_img(self) -> str:
+    def save_img(self) -> str | None:
         """Salva a imagem no disco
 
         Returns:

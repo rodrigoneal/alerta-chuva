@@ -5,7 +5,7 @@ from typing import Any
 
 from sqlalchemy import delete, func, select, update
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncEngine
+from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from alerta_chuva.commom.types import TypeQuery
 from alerta_chuva.domain.entities.rain import RainCreate, RainUpdate
@@ -18,7 +18,7 @@ class RainRepository:
     Para interacão com o banco de dados.
     """
 
-    def __init__(self, session: AsyncEngine):
+    def __init__(self, session: AsyncSession):
         self.session = session  # session do sqlalchemy
 
     async def create(self, schema: RainCreate):
@@ -118,7 +118,7 @@ class RainRepository:
             result = await session.execute(query)
             return result.scalars().one()
 
-    async def update(self, schema: RainUpdate, _id: int) -> ChuvaModel:
+    async def update(self, schema: RainUpdate, _id: int) -> ChuvaModel | None:
         """Atualiza um acumulo de chuva no banco de dados.
 
         Args:
@@ -139,7 +139,7 @@ class RainRepository:
             model = (await session.execute(query)).scalar_one_or_none()
             return model
 
-    async def delete(self, _id: int) -> ChuvaModel:
+    async def delete(self, _id: int) -> ChuvaModel | None:
         """Deleta um acumulo de chuva no banco de dados.
 
         Args:

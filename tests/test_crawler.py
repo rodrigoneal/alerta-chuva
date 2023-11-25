@@ -1,5 +1,6 @@
 from alerta_chuva.services.crawler.crawler import Crawler
 
+
 async def test_se_pega_ultimos_acumulados_de_chuva(crawler: Crawler):
     acumulado = await crawler.get_rainfall_data()
     esperado = max([i.station_id for i in acumulado.rain_register])

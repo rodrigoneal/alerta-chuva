@@ -5,7 +5,9 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from alerta_chuva.domain.model import Base
 
-connection_pool_size = min(32, os.cpu_count() + 4)
+num_cpu = os.cpu_count()
+
+connection_pool_size = min(32, num_cpu + 4) if num_cpu else 4
 
 
 class Settings:

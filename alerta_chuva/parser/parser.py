@@ -2,10 +2,10 @@ from datetime import date, datetime
 
 import cv2
 import numpy as np
-from dateutil import parser
+from dateutil import parser  # type: ignore
 
 
-def str_to_datetime_or_date(data: str, hora: str = None) -> datetime | date:
+def str_to_datetime_or_date(data: str, hora: str | None = None) -> datetime | date:
     """
     Transforma uma string em um objeto datetime ou date.
     Se não houver hora, assume-se que a string contém apenas a data.
@@ -26,10 +26,9 @@ def str_to_datetime_or_date(data: str, hora: str = None) -> datetime | date:
         datetime | date: Objeto datetime ou date.
     """
     if hora:
-        date = parser.parse(data + " " + hora, dayfirst=True)
+        return parser.parse(data + " " + hora, dayfirst=True)
     else:
-        date = parser.parse(data, dayfirst=True).date()
-    return date
+        return parser.parse(data, dayfirst=True).date()
 
 
 def img_bytes_to_ndarray(img_bytes: bytes) -> np.ndarray:

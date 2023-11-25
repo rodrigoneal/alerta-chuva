@@ -15,14 +15,13 @@ class Crawler:
     Facilita a coleta de dados de chuva de forma assíncrona.
     """
 
-    def __init__(self, rain_repository: RainRepository):
+    def __init__(self, rain_repository: RainRepository | None = None):
         self.rain_repository = rain_repository
         self.endpoint = "/dados/h24/{}/"
-        self.rains = []
         self.link_img_radar = "https://bpyu1frhri.execute-api.us-east-1.amazonaws.com/maparadar/radar0{}.png"
         self.url_data_rain = "https://websempre.rio.rj.gov.br/estacoes/"
 
-    async def make_request(self, url: str):
+    async def make_request(self, url: str) -> httpx.Response | None:
         """Faz uma requisição HTTP assíncrona.
         Lança uma exceção se demorar mais que 5 segundos.
         Args:
@@ -38,7 +37,7 @@ class Crawler:
             except httpx.ReadTimeout:
                 return None
 
-    async def get_radar_img(self) -> Generator[int, None, None]:
+    async def get_radar_img(self) -> Generator[bytes, None, None]:
         """Baixa as 20 imagens do radar.
 
         Returns:
@@ -54,20 +53,23 @@ class Crawler:
             task = asyncio.create_task(self.make_request(url))
             tasks.append(task)
         responses = await asyncio.gather(*tasks, return_exceptions=True)
+
         return (
             response.content
             for response in responses
-            if response and response.status_code == 200
+            if isinstance(response, httpx.Response) and hasattr(response, "content")
         )
 
-    async def get_rainfall_data(self) -> RainRecord:
+    async def get_rainfall_data(self) -> RainRecord | None:
         """Faz uma requisição HTTP assíncrona e coleta os dados de chuva.
         Returns:
             RainRecord: Acumulo de chuva.
         """
         response = await self.make_request(self.url_data_rain)
+        if not response:
+            return None
         rain_register = self.extract_info_rain(response.text)
-        return RainRecord(rain_register, self.rain_repository)
+        return RainRecord(rain_register, self.rain_repository)  # type: ignore
 
     def extract_info_rain(self, html: str):
         acumulados = []
