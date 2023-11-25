@@ -1,19 +1,4 @@
-import httpx
-import pytest
-
 from alerta_chuva.services.crawler.crawler import Crawler
-
-
-def site_online():
-    URL = "http://alertario.rio.rj.gov.br/download/dados-pluviometricos/"
-    return httpx.get(URL).status_code != 200
-
-
-@pytest.fixture(scope="session")
-def html_response():
-    with open("tests/data/IRAJA.html", "r") as f:
-        return f.read()
-
 
 async def test_se_pega_ultimos_acumulados_de_chuva(crawler: Crawler):
     acumulado = await crawler.get_rainfall_data()
