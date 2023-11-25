@@ -10,7 +10,7 @@ def normalize_text(texts: list[str]) -> str:
         str: Data normalizada.
     """
     if len(texts) == 6:
-        texts[3] = ":".join(texts[3:4])
+        texts[3] = ":".join(texts[3:5])
         del texts[4]
     if len(texts) < 5:
         data = texts[2].split(" ", 1)[0]
