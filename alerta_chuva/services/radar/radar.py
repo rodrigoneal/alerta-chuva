@@ -10,7 +10,7 @@ from joblib import Parallel, delayed  # type: ignore
 
 from alerta_chuva.commom.aux import RadarImgInfo
 from alerta_chuva.commom.types import ColorAndGrade, RegionRadar, RegionType
-from alerta_chuva.exceptions.radar_exceptions import NoRadarImagesFound, RegionNotExist
+from alerta_chuva.exceptions.radar_exceptions import NoRadarImagesFound
 from alerta_chuva.parser.normalize_text import normalize_text
 from alerta_chuva.parser.parser import img_bytes_to_ndarray, parser_to_ndarray
 from alerta_chuva.services.crawler.crawler import Crawler
@@ -115,7 +115,7 @@ class Radar:
             case "Oeste":
                 return ((381, 370), 50)
             case "Leste":
-                raise RegionNotExist(f"Region: {region} does not exist")
+                return ((490, 366), 320)
             case "Rio":
                 return ((490, 366), 320)
             case _:

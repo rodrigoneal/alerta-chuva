@@ -96,3 +96,44 @@ def test_se_encontra_chuva_no_columbia(radar: Radar, imagem_radar: np.ndarray):
 async def test_se_pega_a_intensidade_de_todas_as_imagens_do_radar(radar: Radar):
     intensidades = await radar.get_rain_intensity("Rio")
     assert len(intensidades) > 0
+
+
+@pytest.mark.parametrize(
+    "regiao, esperado",
+    [
+        (
+            "Columbia",
+            ((491, 346), 20),
+        ),
+        (
+            "Campo Grande",
+            ((429, 366), 30),
+        ),
+        (
+            "Ilha do Governador",
+            ((527, 341), 50),
+        ),
+        (
+            "Norte",
+            ((480, 356), 50),
+        ),
+        (
+            "Sul",
+            ((516, 407), 50),
+        ),
+        (
+            "Oeste",
+            ((381, 370), 50),
+        ),
+        (
+            "Leste",
+            ((490, 366), 320),
+        ),
+        (
+            "Rio",
+            ((490, 366), 320),
+        ),
+    ],
+)
+def test_se_retorna_a_regiao_do_radar(radar: Radar, regiao, esperado):
+    assert radar.region_of_interest(regiao) == esperado
