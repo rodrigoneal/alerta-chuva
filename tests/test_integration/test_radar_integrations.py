@@ -20,12 +20,14 @@ def radar_img(httpx_mock: HTTPXMock):
 async def test_se_pega_dados_do_radar_e_mostra_presenca_de_chuva(
     radar: Radar, radar_img
 ):
-    radar_info = await radar.radar()
-    assert radar_info.grau >= 5
+    radar_info = await radar.get_rain_intensity()
+    _radar = sorted(radar_info, key=lambda x: x.grau, reverse=True)[0]
+    assert _radar.grau >= 5
 
 
 async def test_se_pega_dados_do_radar_e_mostra_presenca_de_chuva_no_columbia(
     radar: Radar, radar_img
 ):
-    radar_info = await radar.radar("Columbia")
-    assert radar_info.grau == 0
+    radar_info = await radar.get_rain_intensity("Columbia")
+    _radar = sorted(radar_info, key=lambda x: x.grau, reverse=True)[0]
+    assert _radar.grau == 0

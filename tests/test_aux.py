@@ -7,14 +7,6 @@ from alerta_chuva.commom.aux import RadarImgInfo, RainRecord
 from alerta_chuva.domain.entities.rain import RainCreate
 
 
-@pytest.fixture(autouse=True)
-def apagar():
-    yield
-    import shutil
-
-    shutil.rmtree("radar", ignore_errors=True)
-
-
 @pytest.fixture
 def rain_create():
     return RainCreate(
@@ -57,5 +49,19 @@ def test_se_salva_a_imagem_do_radar():
 
     imagem = np.zeros((100, 100, 3), dtype=np.uint8)
     radar_image = RadarImgInfo(datetime.now(), imagem)
-    img = radar_image.save_img()
-    assert Path(img).exists()
+    img = radar_image.save_img("radar")
+    path = Path(img)
+    assert path.exists()
+    path.unlink()
+
+
+@pytest.mark.xfail
+def test_se_salva_mapa_do_radar():
+    from pathlib import Path
+
+    imagem = np.zeros((100, 100, 3), dtype=np.uint8)
+    radar_image = RadarImgInfo(datetime.now(), imagem)
+    img = radar_image.save_map("radar")
+    path = Path(img)
+    assert path.exists()
+    path.unlink()

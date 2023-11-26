@@ -43,14 +43,14 @@ def imagem_radar():
     ],
 )
 def test_se_encontra_grandeza(radar: Radar, imagem, grau):
-    assert radar.find_rain_intensity(imagem, radar.cores_e_graus) == grau
+    assert radar.find_rain_intensity(imagem) == grau
 
 
 async def test_se_abre_imagem_em_bytes(radar: Radar):
     with open("tests/data/img/img.png", "rb") as f:
         imagem = f.read()
     grandeza = radar.check_radar(imagem, "Columbia")
-    assert grandeza == 3
+    assert grandeza.grau == 3
 
 
 @pytest.mark.parametrize(
@@ -62,13 +62,13 @@ async def test_se_abre_imagem_em_bytes(radar: Radar):
 )
 def test_se_encontra_grandeza_no_columbia(radar: Radar, imagem, grau):
     grandeza = radar.check_radar(imagem, "Columbia")
-    assert grandeza == grau
+    assert grandeza.grau == grau
 
 
 def test_se_pega_a_data_da_imagem_do_radar(radar: Radar):
     esperado = datetime(2023, 11, 20, 14, 54, 57)
     imagem = cv2.imread("tests/data/img/img.png")
-    date = radar._extract_date_img_radar(imagem)
+    date = radar.extract_date_img_radar(imagem)
     assert date.data == esperado
 
 
@@ -80,14 +80,19 @@ def test_se_pega_a_data_da_imagem_do_radar(radar: Radar):
 
 def test_se_encontra_chuva_na_ilha(radar: Radar, imagem_radar: np.ndarray):
     grandeza = radar.check_radar(imagem_radar, "Ilha do Governador")
-    assert grandeza == 3
+    assert grandeza.grau == 3
 
 
 def test_se_encontra_chuva_no_campo_grande(radar: Radar, imagem_radar: np.ndarray):
     grandeza = radar.check_radar(imagem_radar, "Campo Grande")
-    assert grandeza == 0
+    assert grandeza.grau == 0
 
 
 def test_se_encontra_chuva_no_columbia(radar: Radar, imagem_radar: np.ndarray):
     grandeza = radar.check_radar(imagem_radar, "Columbia")
-    assert grandeza == 0
+    assert grandeza.grau == 0
+
+
+async def test_se_pega_a_intensidade_de_todas_as_imagens_do_radar(radar: Radar):
+    intensidades = await radar.get_rain_intensity("Rio")
+    assert len(intensidades) > 0

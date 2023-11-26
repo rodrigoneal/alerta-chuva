@@ -45,3 +45,15 @@ def img_bytes_to_ndarray(img_bytes: bytes) -> np.ndarray:
     nparr = np.frombuffer(img_bytes, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     return img
+
+
+def parser_to_ndarray(img: str | bytes | np.ndarray) -> np.ndarray:
+    if isinstance(img, str):
+        imagem = cv2.imread(img)
+    elif isinstance(img, bytes):
+        imagem = img_bytes_to_ndarray(img)
+    elif isinstance(img, np.ndarray):
+        imagem = img
+    else:
+        raise ValueError(f"img is type {type(img)} not a numpy array")
+    return imagem

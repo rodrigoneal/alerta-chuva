@@ -24,6 +24,7 @@ opencv-python = "^4.8.1.78"
 matplotlib = "^3.8.2"
 ipyleaflet = "^0.17.4"
 types-python-dateutil = "^2.8.19.14"
+selenium = "^4.15.2"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -1,6 +1,6 @@
 # Modulo para criar tipo de dados.
 
-from typing import Literal, TypeAlias
+from typing import Callable, Literal, ParamSpec, TypeAlias
 
 TypeQuery: TypeAlias = Literal["id", "station_id", "data", "station_name, region"]
 
@@ -20,3 +20,8 @@ RegionType: TypeAlias = Literal[
 ]
 
 RegionRadar: TypeAlias = tuple[tuple[int, int], int]
+
+P = ParamSpec("P")
+T = ParamSpec("T")
+
+Func: TypeAlias = Callable[P, T]  # type: ignore
