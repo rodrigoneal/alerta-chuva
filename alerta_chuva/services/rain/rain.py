@@ -7,7 +7,7 @@ from alerta_chuva.domain.entities.rain import RainRead
 from alerta_chuva.domain.repositories.rain_repository import RainRepository
 
 
-class Chuva:
+class Rain:
     chuva = (0.1, 10000.0)
     chuva_fraca = (0.1, 5.0)
     chuva_moderada = (5.1, 25.0)

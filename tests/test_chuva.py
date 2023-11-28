@@ -1,19 +1,19 @@
 import pytest
 
-from alerta_chuva.services.acumulado.chuva import Chuva
+from alerta_chuva.services.rain.rain import Rain
 
 
 @pytest.fixture
 def chuva(chuva_repository):
-    return Chuva(chuva_repository)
+    return Rain(chuva_repository)
 
 
-async def test_se_pega_chuva_pela_data(chuva: Chuva, load_database):
+async def test_se_pega_chuva_pela_data(chuva: Rain, load_database):
     result = await chuva.chuva_detectada(station="Vidigal", data="20/11/2023")
     assert result is True
 
 
-async def test_se_pega_chuva_pela_data_hora(chuva: Chuva, load_database):
+async def test_se_pega_chuva_pela_data_hora(chuva: Rain, load_database):
     assert (
         await chuva.chuva_detectada(
             station="Vidigal", data="20/11/2023", hora="13:50:00"

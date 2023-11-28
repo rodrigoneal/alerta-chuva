@@ -60,7 +60,7 @@ def insentidade_chuva(intensidade: tuple[float, float]):
 
     def func(f: Func) -> Func:
         async def inner(*args: P.args, **kwargs: P.kwargs) -> T:  # type: ignore
-            from alerta_chuva.services.acumulado.chuva import Chuva
+            from alerta_chuva.services.rain.rain import Rain
 
             _station = kwargs.get("station")
             if not _station or not isinstance(_station, (str)):
@@ -72,7 +72,7 @@ def insentidade_chuva(intensidade: tuple[float, float]):
             assert isinstance(hora_chuva, (str, type(None)))
             date = str_to_datetime_or_date(data_chuva, hora_chuva)
 
-            self: Chuva = args[0]  # type: ignore
+            self: Rain = args[0]  # type: ignore
             chuva = await self.get_rains(date, station)
             if chuva:
                 quantidade = (

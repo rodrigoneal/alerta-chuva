@@ -51,7 +51,7 @@ class Crawler:
             return None
         return response.text
 
-    def extract_info_river(self, soup: BeautifulSoup) -> dict[str, str]:
+    def extract_info_river(self, html: str | None) -> dict[str, str]:
         """Pega o valor do acumulo de chuva.
         Args:
             soup (BeautifulSoup): Objeto BeautifulSoup.
@@ -60,18 +60,19 @@ class Crawler:
             str: Acumulo de chuva.
         """
         # Encontre todas as linhas da tabela
-
+        if not html:
+            return {}
         th = (
-            "Hora",
+            "hora",
             "quantity_15_min",
             "quantity_1h",
             "quantity_14h",
-            "quantity_124h",
-            "quantity_196h",
-            "quantity_130d",
+            "quantity_24h",
+            "quantity_96h",
+            "quantity_30d",
             "rio",
         )
-
+        soup = BeautifulSoup(html, "html.parser")
         linhas = soup.find("table", {"id": "Table"}).find_all("tr")  # type: ignore
         primeira_linha_com_td = None
         for linha in linhas:
@@ -91,8 +92,7 @@ class Crawler:
             dict[str, str]: Dados do rio.
         """
         river_html = await self.get_river_data(river)
-        soup = BeautifulSoup(river_html, "html.parser")  # type: ignore
-        return self.extract_info_river(soup)
+        return self.extract_info_river(river_html)
 
     async def get_radar_img(self) -> Generator[bytes, None, None]:
         """Baixa as 20 imagens do radar.
