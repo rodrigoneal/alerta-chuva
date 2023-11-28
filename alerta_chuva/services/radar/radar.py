@@ -1,5 +1,5 @@
 import os
-from typing import Any, Callable, ClassVar, Iterable, Literal, Sequence, TypeVar
+from typing import Any, Callable, ClassVar, Iterable, Sequence, TypeVar
 
 import cv2
 import easyocr  # type: ignore
@@ -9,7 +9,8 @@ from dateutil.parser._parser import ParserError  # type: ignore
 from joblib import Parallel, delayed  # type: ignore
 
 from alerta_chuva.commom.aux import RadarImgInfo
-from alerta_chuva.commom.types import ColorAndGrade, RegionRadar, RegionType
+from alerta_chuva.commom.types import ColorAndGrade, RegionRadar
+from alerta_chuva.enums.locais import LocalRadar
 from alerta_chuva.exceptions.radar_exceptions import NoRadarImagesFound
 from alerta_chuva.parser.normalize_text import normalize_text
 from alerta_chuva.parser.parser import img_bytes_to_ndarray, parser_to_ndarray
@@ -86,7 +87,7 @@ class Radar:
 
     def region_of_interest(
         self,
-        region: RegionType,
+        region: LocalRadar | str,
     ) -> RegionRadar:
         """Retorna o ponto central e raio da regiao do radar.
         Para fazer busca em uma região do Rio de Janeiro.
@@ -101,25 +102,11 @@ class Radar:
             RegionRadar: Ponto central e raio da regiao do radar
         """
 
-        match region:
-            case "Columbia":
-                return ((491, 346), 20)
-            case "Campo Grande":
-                return ((429, 366), 30)
-            case "Ilha do Governador":
-                return ((527, 341), 50)
-            case "Norte":
-                return ((480, 356), 50)
-            case "Sul":
-                return ((516, 407), 50)
-            case "Oeste":
-                return ((381, 370), 50)
-            case "Leste":
-                return ((490, 366), 320)
-            case "Rio":
-                return ((490, 366), 320)
-            case _:
-                return ((490, 366), 320)
+        if isinstance(region, str):
+            _region = region.upper().replace(" ", "_")
+            return LocalRadar[_region].value
+
+        return region.value
 
     def select_radar_area(
         self, img: np.ndarray, central_point: tuple[int, int], radios: int
@@ -170,7 +157,7 @@ class Radar:
     def check_radar(
         self,
         img_radar: str | bytes | np.ndarray,
-        radar_area: RegionType | Literal["Rio"] = "Rio",
+        radar_area: LocalRadar | str = LocalRadar.RIO,
     ):
         """Faz analise na imagem do radar e mostra a intensidade da chuva.
         Se nenhuma imagem for encontrada, levanta uma exceção NoRadarImagesFound.
@@ -207,12 +194,12 @@ class Radar:
         Returns:
             list[T]: Resultado da função paralelizada.
         """
-        return Parallel(n_jobs=self.num_processors)(
+        return Parallel(n_jobs=self.num_processors, verbose=10)(
             delayed(func)(arg, **kwargs) for arg in args
         )
 
     async def get_rain_intensity(
-        self, radar_area: RegionType | None = None
+        self, radar_area: LocalRadar | str = LocalRadar.RIO
     ) -> list[RadarImgInfo]:
         """Retorna a intensidade da chuva na imagem do radar.
 

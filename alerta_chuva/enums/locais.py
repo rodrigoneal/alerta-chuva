@@ -48,18 +48,40 @@ class LocalChuva(Enum):
     MUDA = 33
 
 
-class LocalRadar(str, Enum):
+class LocalRadar(Enum):
     """Locais que consegui identificar no radar.
     Pode usar esses lugares para verificar se há alguma chuva captada pelo radar.
     Enumerei para quando alguém precisar saber quais locaia já foram identificadas
     no radar.
     """
 
-    RIO = "Rio"
-    COLUMBIA = "Columbia"
-    CAMPO_GRANDE = "Campo Grande"
-    ILHA_DO_GOVERNADOR = "Ilha do Governador"
-    NORTE = "Norte"
-    SUL = "Sul"
-    LESTE = "Leste"
-    OESTE = "Oeste"
+    RIO = ((490, 366), 320)
+    COLUMBIA = ((491, 346), 20)
+    CAMPO_GRANDE = ((429, 366), 30)
+    ILHA_DO_GOVERNADOR = ((527, 341), 50)
+    NORTE = ((480, 356), 50)
+    SUL = ((516, 407), 50)
+    LESTE = ((490, 366), 320)
+    OESTE = ((381, 370), 50)
+
+    def __repr__(self) -> str:
+        return self.name
+
+
+class LocalRiver(str, Enum):
+    """Locais onde há dados do nivel dos rios, Eu resolvi limitar por locais proximos a capital,
+    pois se eu fosse pegar todos os locais iria demorar muito.
+
+    """
+
+    PAVUNA = "224329420"
+    MARACANA = "22544313020"
+    CACHOEIRA = "BE70E16620"
+    GUANDU = "22484337020"
+    BOTA = "22484337020"
+    CACHIMBO = "224329320"
+    CAPIVARI = "224327820"
+    SARACURUNA = "224327420"
+
+    def __repr__(self) -> str:
+        return self.name

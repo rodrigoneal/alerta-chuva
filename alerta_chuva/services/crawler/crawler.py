@@ -20,6 +20,7 @@ class Crawler:
         self.endpoint = "/dados/h24/{}/"
         self.link_img_radar = "https://bpyu1frhri.execute-api.us-east-1.amazonaws.com/maparadar/radar0{}.png"
         self.url_data_rain = "https://websempre.rio.rj.gov.br/estacoes/"
+        self.url_rivers = "http://alertadecheias.inea.rj.gov.br/alertadecheias/{}.html"
 
     async def make_request(self, url: str) -> httpx.Response | None:
         """Faz uma requisição HTTP assíncrona.
@@ -37,13 +38,68 @@ class Crawler:
             except httpx.ReadTimeout:
                 return None
 
+    async def get_river_data(self, river: str) -> str | None:
+        """Faz uma requisição HTTP assíncrona e coleta os dados do rio.
+        Args:
+            river (str): Nome do rio.
+
+        Returns:
+            str: Pagina HTML.
+        """
+        response = await self.make_request(self.url_rivers.format(river))
+        if not response:
+            return None
+        return response.text
+
+    def extract_info_river(self, soup: BeautifulSoup) -> dict[str, str]:
+        """Pega o valor do acumulo de chuva.
+        Args:
+            soup (BeautifulSoup): Objeto BeautifulSoup.
+
+        Returns:
+            str: Acumulo de chuva.
+        """
+        # Encontre todas as linhas da tabela
+
+        th = (
+            "Hora",
+            "quantity_15_min",
+            "quantity_1h",
+            "quantity_14h",
+            "quantity_124h",
+            "quantity_196h",
+            "quantity_130d",
+            "rio",
+        )
+
+        linhas = soup.find("table", {"id": "Table"}).find_all("tr")  # type: ignore
+        primeira_linha_com_td = None
+        for linha in linhas:
+            if linha.find("td"):
+                primeira_linha_com_td = linha
+                break
+        tds = primeira_linha_com_td.find_all("td")  # type: ignore
+
+        return {key: td.text for key, td in zip(th, tds)}
+
+    async def river_data(self, river: str) -> dict[str, str]:
+        """Faz uma requisição HTTP assíncrona e coleta os dados do rio.
+        Args:
+            river (str): Nome do rio.
+
+        Returns:
+            dict[str, str]: Dados do rio.
+        """
+        river_html = await self.get_river_data(river)
+        soup = BeautifulSoup(river_html, "html.parser")  # type: ignore
+        return self.extract_info_river(soup)
+
     async def get_radar_img(self) -> Generator[bytes, None, None]:
         """Baixa as 20 imagens do radar.
 
         Returns:
             list[bytes]: Imagens do radar.
         """
-
         tasks = []
         for i in range(1, 20 + 1):
             if i < 10:
