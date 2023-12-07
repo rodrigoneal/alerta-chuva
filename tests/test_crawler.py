@@ -1,3 +1,4 @@
+import pytest
 from alerta_chuva.enums.locais import LocalRiver
 from alerta_chuva.services.crawler.crawler import Crawler
 
@@ -14,6 +15,13 @@ async def test_se_pega_as_imagens_do_radar(crawler: Crawler):
     imgs = await crawler.get_radar_img()
     assert len(tuple(imgs)) > 0
 
+@pytest.mark.parametrize("index_img", [i for i in range(20)])
+def test_se_cria_url_img_radar(crawler: Crawler, index_img:int):
+    esperado = "radar00{}".format(index_img)
+    if index_img >= 10:
+        esperado = "radar0{}".format(index_img)
+    url = crawler.create_url_img_radar(index_img)
+    assert esperado in url
 
 async def test_se_faz_crawler_do_river(crawler: Crawler):
     pavuna = LocalRiver.PAVUNA.value

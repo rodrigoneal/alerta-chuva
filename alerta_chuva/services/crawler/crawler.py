@@ -83,23 +83,37 @@ class Crawler:
 
         return {key: td.text for key, td in zip(th, tds)}
 
-    async def river_data(self, river: str) -> dict[str, str]:
+    async def river_data(self, river: str) -> dict:
         """Faz uma requisição HTTP assíncrona e coleta os dados do rio.
         Args:
             river (str): Nome do rio.
 
         Returns:
-            dict[str, str]: Dados do rio.
+            dict: Dados do rio.
         """
         river_html = await self.get_river_data(river)
         return self.extract_info_river(river_html)
+    
+    def create_url_img_radar(self, img_index: int) -> str:
+        """Cria a url da imagem do radar.
+        Args:
+            img_index (int): Indice da imagem do radar.
+
+        Returns:
+            str: Url da imagem do radar.
+        """
+        img_index = str(int(img_index))
+        img_index = img_index.zfill(2)
+
+        return self.link_img_radar.format(img_index)
 
     async def get_radar_img(self) -> Generator[bytes, None, None]:
         """Baixa as 20 imagens do radar.
 
         Returns:
-            list[bytes]: Imagens do radar.
+            Generator[bytes]: Imagens do radar.
         """
+
         tasks = []
         for i in range(1, 20 + 1):
             if i < 10:
@@ -127,7 +141,7 @@ class Crawler:
         rain_register = self.extract_info_rain(response.text)
         return RainRecord(rain_register, self.rain_repository)  # type: ignore
 
-    def extract_info_rain(self, html: str):
+    def extract_info_rain(self, html: str) -> list[RainCreate]:
         acumulados = []
         soup = BeautifulSoup(html, "html.parser")
         rows = soup.find_all(

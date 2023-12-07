@@ -38,6 +38,12 @@ class RainBase(BaseModel):
     quantity_month: volume_type
     tx_15: volume_type
 
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, (tuple, list)):
+            return self.quantity_15_min >= other[0] and self.quantity_15_min < other[1]
+        return super().__eq__(other)
+
+
 
 class RainCreate(RainBase):
     """Modelo para criar um acumulo de chuva.

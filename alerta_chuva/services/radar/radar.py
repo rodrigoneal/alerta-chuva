@@ -158,7 +158,7 @@ class Radar:
         self,
         img_radar: str | bytes | np.ndarray,
         radar_area: LocalRadar | str = LocalRadar.RIO,
-    ):
+    ) -> RadarImgInfo:
         """Faz analise na imagem do radar e mostra a intensidade da chuva.
         Se nenhuma imagem for encontrada, levanta uma exceção NoRadarImagesFound.
         Se nenhuma area for passada será considerada a area do Rio.
@@ -168,7 +168,7 @@ class Radar:
             radar_area (RegionType | None, optional): Região que será analisada. Defaults to None.
 
         Returns:
-            _type_: _description_
+            RadarImgInfo: Dados do radar.
         """
         img_array = parser_to_ndarray(img_radar)
         if img_array is None:

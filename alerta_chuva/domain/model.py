@@ -69,3 +69,78 @@ class ChuvaModel(Base):
                 attributos.append(f"{attr}: {value!r}")
 
         return f"ChuvaModel({', '.join(attributos)})"
+
+
+class RadarModel(Base):
+    """
+    Tabela de radars.
+
+    Args:
+        Base (DeclarativeBase): Classe base do SQLAlchemy
+
+    Returns:
+       RadarModel : RadarModel
+    """
+
+    __tablename__ = "radars"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    data: Mapped[datetime | None]
+    img: Mapped[str | None]
+    grau: Mapped[int]
+
+    def __repr__(self) -> str:
+        """Representacão do objeto.
+
+
+        Returns:
+            str: representação do objeto com os atributos.
+        """
+
+        attributos = []
+        ignore = ["metadata", "registry"]
+        for attr in dir(self):
+            if not attr.startswith("_") and attr not in ignore:
+                value = getattr(self, attr)
+                attributos.append(f"{attr}: {value!r}")
+
+        return f"RadarModel({', '.join(attributos)})"
+
+class RiverModel(Base):
+    """
+    Tabela de rivers.
+
+    Args:
+        Base (DeclarativeBase): Classe base do SQLAlchemy
+
+    Returns:
+       RiverModel : RiverModel
+    """
+
+    __tablename__ = "rivers"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    hora: Mapped[datetime]
+    quantity_15_min: Mapped[float]
+    quantity_1h: Mapped[float]
+    quantity_14h: Mapped[float]
+    quantity_24h: Mapped[float]
+    quantity_96h: Mapped[float]
+    quantity_30d: Mapped[float]
+    rio: Mapped[float]
+
+
+    def __repr__(self) -> str:
+        """Representacão do objeto.
+
+
+        Returns:
+            str: representação do objeto com os atributos.
+        """
+
+        attributos = []
+        ignore = ["metadata", "registry"]
+        for attr in dir(self):
+            if not attr.startswith("_") and attr not in ignore:
+                value = getattr(self, attr)
+                attributos.append(f"{attr}: {value!r}")
+
+        return f"RiverModel({', '.join(attributos)})"

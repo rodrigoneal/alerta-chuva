@@ -9,8 +9,40 @@ class LocalChuva(Enum):
     Para ajudar a compreender e pegar os locais usados no site da prefeitura do
     Rio.
 
-    Args:
-        Enum (_type_): _description_
+    Attributes:
+        VIDIGAL (int): Local de Vidigal.
+        URCA (int): Local de Urca.
+        ROCINHA (int): Local de Rocinha.
+        TIJUCA (int): Local de Tijuca.
+        SANTA_TERESA (int): Local de Santa Terezinha.
+        COPACABANA (int): Local de Copacabana.
+        GRAJAU (int): Local de Grajau.
+        ILHA_DO_GOVERNADOR (int): Local de Ilha do Governador.
+        PENHA (int): Local de Penha.
+        MADUREIRA (int): Local de Madureira.
+        IRAJA (int): Local de Iraja.
+        BANGU (int): Local de Bangu.
+        PIEDADE (int): Local de Piedade.
+        TANQUE (int): Local de Tanque.
+        SAUDE (int): Local de Saude.
+        JARDIM_BOTANICO (int): Local de Jardim Botanico.
+        BARRINHA (int): Local de Barrinha.
+        CIDADE_DE_DEUS (int): Local de Cidade de Deus.
+        RIOCENTRO (int): Local de Rio Centro.
+        GUARATIBA (int): Local de Guaratiba.
+        JACAREPAGUA (int): Local de Jacarepagua.
+        SANTA_CRUZ (int): Local de Santa Cruz.
+        GRANDE_MEIER (int): Local de Grande Meier.
+        ANCHIETA (int): Local de Anchieta.
+        GROTA_FUNDA (int): Local de Grotta Funda.
+        CAMPO_GRANDE (int): Local de Campo Grande.
+        SEPETIBA (int): Local de Sepetiba.
+        ALTO_DA_BOA_VISTA (int): Local de Alto da Boa Vista.
+        MENDANHA (int): Local de Mendanha.
+        RECREIO_DOS_BANDEIRANTES (int): Local de Recreio dos Bandeirantes.
+        LARANJEIRAS (int): Local de Laranjeiras.
+        SAO_CRISTOVAO (int): Local de Sao Cristovao.
+        MUDA (int): Local de Muda.
     """
 
     VIDIGAL = 1
