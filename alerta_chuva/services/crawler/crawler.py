@@ -102,10 +102,10 @@ class Crawler:
         Returns:
             str: Url da imagem do radar.
         """
-        img_index = str(int(img_index))
-        img_index = img_index.zfill(2)
+        index = str(int(img_index))
+        index = index.zfill(2)
 
-        return self.link_img_radar.format(img_index)
+        return self.link_img_radar.format(index)
 
     async def get_radar_img(self) -> Generator[bytes, None, None]:
         """Baixa as 20 imagens do radar.
@@ -113,16 +113,13 @@ class Crawler:
         Returns:
             Generator[bytes]: Imagens do radar.
         """
-
-        tasks = []
-        for i in range(1, 20 + 1):
-            if i < 10:
-                url = self.link_img_radar.format("0" + str(i))
-            else:
-                url = self.link_img_radar.format(i)
-            task = asyncio.create_task(self.make_request(url))
-            tasks.append(task)
-        responses = await asyncio.gather(*tasks, return_exceptions=True)
+        urls = (self.create_url_img_radar(i) for i in range(1, 21))
+        tasks = [asyncio.create_task(self.make_request(url)) for url in urls]
+        responses = []
+        for task in asyncio.as_completed(tasks):
+            response = await task
+            if response and response.status_code == 200:
+                responses.append(response)
 
         return (
             response.content

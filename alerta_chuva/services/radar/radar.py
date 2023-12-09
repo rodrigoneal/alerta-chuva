@@ -146,7 +146,9 @@ class Radar:
         reader = easyocr.Reader(["en"])
         text_area = img[0:30, 0:310]
         ocr_text = reader.readtext(text_area, detail=0)
+        print(ocr_text)
         text = normalize_text(ocr_text)
+
         print(text)
         try:
             data = parse(text)
@@ -212,4 +214,5 @@ class Radar:
         """
         crawler = Crawler()
         imgs = await crawler.get_radar_img()
-        return self.parallel_extract(self.check_radar, imgs, radar_area=radar_area)  # type: ignore
+        imagens = list(imgs)
+        return self.parallel_extract(self.check_radar, imagens, radar_area=radar_area)  # type: ignore
