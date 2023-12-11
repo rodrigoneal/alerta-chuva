@@ -9,15 +9,16 @@ from sqlalchemy.exc import IntegrityError
 from alerta_chuva.commom.types import TypeQuery
 from alerta_chuva.domain.entities.rain import RainCreate, RainUpdate
 from alerta_chuva.domain.model import ChuvaModel
+from alerta_chuva.domain.repositories import RepositoryABC
 
 
-class RainRepository:
+class RainRepository(RepositoryABC):
     """
     Repositorio de chuva.
     Para interacão com o banco de dados.
     """
 
-    def __init__(self, session):
+    def __init__(self, session = None):
         self.session = session
 
     async def create(self, schema: RainCreate):
@@ -38,8 +39,9 @@ class RainRepository:
                 await session.commit()
                 await session.refresh(model)
                 return model
-            except IntegrityError:
+            except IntegrityError as exc:
                 await session.rollback()
+                return model
 
     async def _read(self, query) -> list[ChuvaModel]:
         """

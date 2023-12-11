@@ -4,15 +4,16 @@ from sqlalchemy import delete, func, select, update
 
 from alerta_chuva.domain.entities.radar import RadarCreate, RadarUpdate
 from alerta_chuva.domain.model import RadarModel
+from alerta_chuva.domain.repositories import RepositoryABC
 
 
-class RadarRepository:
+class RadarRepository(RepositoryABC):
     """
     Repositorio do radar.
     Para interacão com o banco de dados.
     """
 
-    def __init__(self, session):
+    def __init__(self, session = None):
         self.session = session
 
     async def create(self, schema: RadarCreate) -> RadarModel:

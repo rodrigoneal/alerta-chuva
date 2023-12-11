@@ -15,8 +15,7 @@ class Crawler:
     Facilita a coleta de dados de chuva de forma assíncrona.
     """
 
-    def __init__(self, rain_repository: RainRepository | None = None):
-        self.rain_repository = rain_repository
+    def __init__(self):
         self.endpoint = "/dados/h24/{}/"
         self.link_img_radar = "https://bpyu1frhri.execute-api.us-east-1.amazonaws.com/maparadar/radar0{}.png"
         self.url_data_rain = "https://websempre.rio.rj.gov.br/estacoes/"
@@ -135,8 +134,8 @@ class Crawler:
         response = await self.make_request(self.url_data_rain)
         if not response:
             return None
-        rain_register = self.extract_info_rain(response.text)
-        return RainRecord(rain_register, self.rain_repository)  # type: ignore
+        return self.extract_info_rain(response.text)
+
 
     def extract_info_rain(self, html: str) -> list[RainCreate]:
         acumulados = []

@@ -19,7 +19,7 @@ class ChuvaModel(Base):
        ChuvaModel : ChuvaModel
     """
 
-    __tablename__ = "chuvas"
+    __tablename__ = "rains"
     id: Mapped[int] = mapped_column(primary_key=True)
     station_id: Mapped[int]
     station_name: Mapped[str]
@@ -40,9 +40,7 @@ class ChuvaModel(Base):
     quantity_month: Mapped[float]
     tx_15: Mapped[float]
 
-    __table_args__ = (
-        UniqueConstraint("station_name", "data", name="unique_station_data"),
-    )
+    updated_at: Mapped[datetime | None] = mapped_column(onupdate=datetime.utcnow)
 
     def __repr__(self) -> str:
         """Representacão do objeto.
