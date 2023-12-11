@@ -1,5 +1,6 @@
 from alerta_chuva.enums.locais import LocalChuva
 
+
 def local_str_to_int(station: str | int) -> int:
     """
     Converte o nome do local para o id da estação.

@@ -93,7 +93,7 @@ class Crawler:
         """
         river_html = await self.get_river_data(river)
         return self.extract_info_river(river_html)
-    
+
     def create_url_img_radar(self, img_index: int) -> str:
         """Cria a url da imagem do radar.
         Args:

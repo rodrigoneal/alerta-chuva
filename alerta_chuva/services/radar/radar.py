@@ -8,8 +8,8 @@ from dateutil.parser import parse  # type: ignore
 from dateutil.parser._parser import ParserError  # type: ignore
 from joblib import Parallel, delayed  # type: ignore
 
-from alerta_chuva.commom.aux import RadarImgInfo
 from alerta_chuva.commom.types import ColorAndGrade, RegionRadar
+from alerta_chuva.domain.entities.radar import RadarCreate
 from alerta_chuva.enums.locais import LocalRadar
 from alerta_chuva.exceptions.radar_exceptions import NoRadarImagesFound
 from alerta_chuva.parser.normalize_text import normalize_text
@@ -128,7 +128,7 @@ class Radar:
         y2 = min(img.shape[0], central_point[1] + radios)
         return img[y1:y2, x1:x2]
 
-    def extract_date_img_radar(self, img: np.ndarray | bytes) -> RadarImgInfo:
+    def extract_date_img_radar(self, img: np.ndarray | bytes) -> RadarCreate:
         """O site onde eu pego a imagem do radar não vem a data e a hora que a imagem foi capturada.
         Mas na propria imagem do radar, tem a data e a hora que foi capturada.
         Usando o OCR, eu consigo extrair a data e a hora da imagem.
@@ -138,7 +138,7 @@ class Radar:
             img (np.ndarray | bytes): Imagem do radar.
 
         Returns:
-            RadarImgInfo: Informações da imagem do radar.
+            RadarCreate: Informações da imagem do radar.
         """
 
         if isinstance(img, bytes):
@@ -148,19 +148,18 @@ class Radar:
         ocr_text = reader.readtext(text_area, detail=0)
         print(ocr_text)
         text = normalize_text(ocr_text)
-
         print(text)
         try:
             data = parse(text)
         except ParserError:
-            return RadarImgInfo(None, None)
-        return RadarImgInfo(data, img)
+            return RadarCreate(data=None, img=None, grau=None)
+        return RadarCreate(data=data, img=img, grau=None)
 
     def check_radar(
         self,
         img_radar: str | bytes | np.ndarray,
         radar_area: LocalRadar | str = LocalRadar.RIO,
-    ) -> RadarImgInfo:
+    ) -> RadarCreate:
         """Faz analise na imagem do radar e mostra a intensidade da chuva.
         Se nenhuma imagem for encontrada, levanta uma exceção NoRadarImagesFound.
         Se nenhuma area for passada será considerada a area do Rio.
@@ -170,7 +169,7 @@ class Radar:
             radar_area (RegionType | None, optional): Região que será analisada. Defaults to None.
 
         Returns:
-            RadarImgInfo: Dados do radar.
+            RadarCreate: Dados do radar.
         """
         img_array = parser_to_ndarray(img_radar)
         if img_array is None:
@@ -202,7 +201,7 @@ class Radar:
 
     async def get_rain_intensity(
         self, radar_area: LocalRadar | str = LocalRadar.RIO
-    ) -> list[RadarImgInfo]:
+    ) -> list[RadarCreate]:
         """Retorna a intensidade da chuva na imagem do radar.
 
         Args:

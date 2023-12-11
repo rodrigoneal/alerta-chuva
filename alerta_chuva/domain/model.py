@@ -3,18 +3,9 @@
 from datetime import datetime
 
 from sqlalchemy import UniqueConstraint
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column
 
-
-class Base(DeclarativeBase):
-    """
-    Classe base para criar tabelas.
-
-    Args:
-        DeclarativeBase (DeclarativeBase): Classe base do SQLAlchemy
-    """
-
-    pass
+from alerta_chuva.domain import Base
 
 
 class ChuvaModel(Base):
@@ -105,6 +96,7 @@ class RadarModel(Base):
 
         return f"RadarModel({', '.join(attributos)})"
 
+
 class RiverModel(Base):
     """
     Tabela de rivers.
@@ -126,7 +118,6 @@ class RiverModel(Base):
     quantity_96h: Mapped[float]
     quantity_30d: Mapped[float]
     rio: Mapped[float]
-
 
     def __repr__(self) -> str:
         """Representacão do objeto.

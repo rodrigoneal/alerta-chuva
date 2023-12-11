@@ -3,7 +3,8 @@ from datetime import datetime
 import numpy as np
 import pytest
 
-from alerta_chuva.commom.aux import RadarImgInfo, RainRecord
+from alerta_chuva.commom.aux import RainRecord
+from alerta_chuva.domain.entities.radar import RadarCreate
 from alerta_chuva.domain.entities.rain import RainCreate
 
 
@@ -48,7 +49,7 @@ def test_se_salva_a_imagem_do_radar():
     from pathlib import Path
 
     imagem = np.zeros((100, 100, 3), dtype=np.uint8)
-    radar_image = RadarImgInfo(datetime.now(), imagem)
+    radar_image = RadarCreate(data=datetime.now(), img=imagem, grau=0)
     img = radar_image.save_img("radar")
     path = Path(img)
     assert path.exists()
@@ -60,7 +61,7 @@ def test_se_salva_mapa_do_radar():
     from pathlib import Path
 
     imagem = np.zeros((100, 100, 3), dtype=np.uint8)
-    radar_image = RadarImgInfo(datetime.now(), imagem)
+    radar_image = RadarCreate(data=datetime.now(), img=imagem, grau=0)
     img = radar_image.save_map("radar")
     path = Path(img)
     assert path.exists()

@@ -5,7 +5,6 @@ from typing import Any
 
 from sqlalchemy import delete, func, select, update
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from alerta_chuva.commom.types import TypeQuery
 from alerta_chuva.domain.entities.rain import RainCreate, RainUpdate
@@ -18,8 +17,8 @@ class RainRepository:
     Para interacão com o banco de dados.
     """
 
-    def __init__(self, session: AsyncSession):
-        self.session = session  # session do sqlalchemy
+    def __init__(self, session):
+        self.session = session
 
     async def create(self, schema: RainCreate):
         """

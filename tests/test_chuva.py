@@ -1,7 +1,7 @@
 import pytest
+
 from alerta_chuva.domain.entities.rain import RainCreate
 from alerta_chuva.services.crawler.crawler import Crawler
-
 from alerta_chuva.services.rain.rain import Rain
 
 

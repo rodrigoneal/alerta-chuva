@@ -1,7 +1,6 @@
 from datetime import date, datetime
 from functools import lru_cache
 
-
 from alerta_chuva.domain.entities.rain import RainRead
 from alerta_chuva.domain.repositories.rain_repository import RainRepository
 

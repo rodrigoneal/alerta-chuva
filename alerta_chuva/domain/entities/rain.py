@@ -44,7 +44,6 @@ class RainBase(BaseModel):
         return super().__eq__(other)
 
 
-
 class RainCreate(RainBase):
     """Modelo para criar um acumulo de chuva.
 
